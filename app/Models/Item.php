@@ -9,7 +9,7 @@ class Item extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'total_count', 'photo_url'];
+    protected $fillable = ['name', 'total_count', 'photo_url', 'is_active'];
 
     public function loans() {
         return $this->hasMany(Loan::class);
