@@ -45,6 +45,28 @@
             </div>
         @endif
 
+        <div class="max-w-6xl mx-auto p-4 mt-6">
+        
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 shadow">{{ session('success') }}</div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 shadow">
+                {!! session('error') !!}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 shadow">
+                <ul class="list-disc list-inside">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="bg-white p-6 rounded-lg shadow-xl mb-6">
             <h2 class="text-lg font-semibold mb-4 text-indigo-700">Equipos Disponibles</h2>
             <table class="w-full text-left border-collapse">

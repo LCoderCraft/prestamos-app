@@ -15,20 +15,18 @@ class Item extends Model
         return $this->hasMany(Loan::class);
     }
     
-    // Lógica mágica para ver disponibilidad
+    // Verifica si hay stock disponible en un rango de horas
     public function isAvailable($start, $end) {
-        $activeLoans = $this->loans()
+        $occupiedCount = $this->loans()
             ->whereIn('status', ['active', 'pending'])
             ->where(function($query) use ($start, $end) {
-                $query->whereBetween('start_date', [$start, $end])
-                      ->orWhereBetween('end_date', [$start, $end])
-                      ->orWhere(function($q) use ($start, $end){
-                          $q->where('start_date', '<', $start)
-                            ->where('end_date', '>', $end);
-                      });
+                // Lógica exacta de solapamiento de horarios
+                $query->where('start_date', '<', $end)
+                      ->where('end_date', '>', $start);
             })
             ->count();
             
-        return $activeLoans < $this->total_count;
+        // Si los ocupados son menores al total, hay espacio.
+        return $occupiedCount < $this->total_count;
     }
 }

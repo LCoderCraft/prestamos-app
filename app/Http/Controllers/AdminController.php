@@ -8,23 +8,24 @@ use App\Models\Item;
 
 class AdminController extends Controller
 {
-    public function index()
+   public function index()
     {
-        // 1. Préstamos Activos o Pendientes (Para la pestaña de Gestión)
+        // 1. GESTIÓN: Ordenamos para que 'pending' salga ANTES que 'active'
+        // y dentro de eso, las más recientes primero.
         $activeLoans = Loan::with(['user', 'item'])
                            ->whereIn('status', ['pending', 'active'])
-                           ->orderBy('start_date', 'asc')
+                           ->orderByRaw("FIELD(status, 'pending') DESC") // Truco SQL: Pendientes arriba
+                           ->orderBy('created_at', 'asc') // Las más antiguas primero para atenderlas en orden
                            ->get();
 
-        // 2. Historial (Finalizados, Rechazados, Cancelados)
+        // 2. HISTORIAL
         $historyLoans = Loan::with(['user', 'item'])
                             ->whereIn('status', ['finished', 'rejected', 'cancelled'])
-                            ->orderBy('updated_at', 'desc') // Lo más reciente arriba
+                            ->orderBy('updated_at', 'desc')
                             ->get();
 
         $items = Item::all();
 
-        // Enviamos ambas variables a la vista
         return view('admin.dashboard', compact('activeLoans', 'historyLoans', 'items'));
     }
 

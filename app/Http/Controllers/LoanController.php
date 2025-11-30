@@ -23,7 +23,7 @@ use App\Mail\LoanReturned; // <--- Esta es la que te marcaba error en la foto
 
 class LoanController extends Controller
 {
-    public function store(Request $request)
+public function store(Request $request)
     {
         $request->validate([
             'item_id' => 'required|exists:items,id',
@@ -32,32 +32,37 @@ class LoanController extends Controller
             'duration' => 'required|integer|min:1',
         ]);
 
+        // Crear fechas de inicio y fin solicitadas
         $start = Carbon::parse($request->date . ' ' . $request->time);
         $end = $start->copy()->addHours((int) $request->duration);
         
         $item = Item::find($request->item_id);
 
-        // Validación de disponibilidad
+        // --- VALIDACIÓN DE DISPONIBILIDAD ---
         if (!$item->isAvailable($start, $end)) {
-            // Buscamos cuándo se desocupa
-            $conflictLoan = Loan::where('item_id', $item->id)
+            
+            // Si no está disponible, buscamos CUÁNDO se libera el primero.
+            // Buscamos los préstamos que estorban (overlap) y los ordenamos por el que termina primero.
+            $nextFreeLoan = Loan::where('item_id', $item->id)
                 ->whereIn('status', ['active', 'pending'])
-                ->where(function($query) use ($start, $end) {
-                    $query->whereBetween('start_date', [$start, $end])
-                          ->orWhereBetween('end_date', [$start, $end])
-                          ->orWhere(function($q) use ($start, $end) {
-                              $q->where('start_date', '<', $start)
-                                ->where('end_date', '>', $end);
-                          });
+                ->where(function($q) use ($start, $end) {
+                    $q->where('start_date', '<', $end)
+                      ->where('end_date', '>', $start);
                 })
-                ->orderBy('end_date', 'desc')
+                ->orderBy('end_date', 'asc') // El que termine primero es el que libera el cupo
                 ->first();
 
-            $freeTime = $conflictLoan ? $conflictLoan->end_date->format('H:i') : 'más tarde';
+            $suggestion = "";
+            if ($nextFreeLoan) {
+                $timeFree = $nextFreeLoan->end_date->format('H:i');
+                $suggestion = "Un equipo se desocupará a las <b>{$timeFree}</b> hrs. Por favor agenda a partir de esa hora.";
+            }
 
-            return back()->with('error', "El material está ocupado/apartado. Se desocupará a las: $freeTime hrs.");
+            // Regresamos el error con la sugerencia
+            return back()->with('error', "No hay stock suficiente en este horario. {$suggestion}");
         }
 
+        // Si pasó la validación, creamos el préstamo
         $loan = Loan::create([
             'user_id' => Auth::id(),
             'item_id' => $item->id,
