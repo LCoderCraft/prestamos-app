@@ -111,6 +111,38 @@
         </div>
     </div>
 
+                                <div class="bg-white p-6 rounded-lg shadow-xl mt-6">
+    <h2 class="text-lg font-semibold mb-4 text-gray-500">Historial de Préstamos Finalizados</h2>
+    <table class="w-full text-left border-collapse opacity-75">
+        <thead class="bg-gray-50 border-b">
+            <tr>
+                <th class="px-6 py-3 text-xs uppercase text-gray-400">Producto</th>
+                <th class="px-6 py-3 text-xs uppercase text-gray-400">Fecha Préstamo</th>
+                <th class="px-6 py-3 text-xs uppercase text-gray-400">Observación de Entrega</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            @php
+                // Filtramos solo los finalizados de la colección que ya tenemos
+                $history = $myLoans->where('status', 'finished');
+            @endphp
+
+            @forelse($history as $loan)
+            <tr>
+                <td class="px-6 py-4 text-sm text-gray-600">{{ $loan->item->name }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ $loan->start_date->format('d/m/Y') }}</td>
+                <td class="px-6 py-4 text-sm text-gray-600">
+                    {{-- Limpiamos el texto para quitar el prefijo "DEVOLUCIÓN: " si lo tiene --}}
+                    {{ str_replace('DEVOLUCIÓN: ', '', $loan->admin_comment) }}
+                </td>
+            </tr>
+            @empty
+            <tr><td colspan="3" class="px-6 py-4 text-center text-sm text-gray-400">No tienes historial.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
     <div id="loan-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 flex backdrop-blur-sm transition-opacity">
         <div class="bg-white p-6 rounded-lg shadow-2xl w-96 transform scale-100 transition-transform">
             <h3 class="text-xl font-bold mb-4 text-indigo-700 border-b pb-2" id="modal-title">Solicitar</h3>

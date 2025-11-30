@@ -3,19 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+
+// Modelos
 use App\Models\Loan;
 use App\Models\Item;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 use App\Models\User;
-use Illuminate\Support\Facades\Notification;
+
+// Notificaciones
 use App\Notifications\NewLoanRequest;
 use App\Notifications\LoanStatusChanged;
 
-// --- OJO AQUÍ: Faltaban estas librerías para el correo ---
-use Illuminate\Support\Facades\Mail;
+// Correos (Mails)
 use App\Mail\LoanStatusUpdate;
-// ---------------------------------------------------------
+use App\Mail\LoanReturned; // <--- Esta es la que te marcaba error en la foto
 
 class LoanController extends Controller
 {
@@ -33,8 +37,25 @@ class LoanController extends Controller
         
         $item = Item::find($request->item_id);
 
+        // Validación de disponibilidad
         if (!$item->isAvailable($start, $end)) {
-            return back()->with('error', 'El producto no está disponible en ese horario.');
+            // Buscamos cuándo se desocupa
+            $conflictLoan = Loan::where('item_id', $item->id)
+                ->whereIn('status', ['active', 'pending'])
+                ->where(function($query) use ($start, $end) {
+                    $query->whereBetween('start_date', [$start, $end])
+                          ->orWhereBetween('end_date', [$start, $end])
+                          ->orWhere(function($q) use ($start, $end) {
+                              $q->where('start_date', '<', $start)
+                                ->where('end_date', '>', $end);
+                          });
+                })
+                ->orderBy('end_date', 'desc')
+                ->first();
+
+            $freeTime = $conflictLoan ? $conflictLoan->end_date->format('H:i') : 'más tarde';
+
+            return back()->with('error', "El material está ocupado/apartado. Se desocupará a las: $freeTime hrs.");
         }
 
         $loan = Loan::create([
@@ -45,14 +66,14 @@ class LoanController extends Controller
             'status' => 'pending'
         ]);
 
-        // Notificaciones al Admin (Burbuja)
+        // Notificar Admin
         $admins = User::where('role', 'admin')->get();
         Notification::send($admins, new NewLoanRequest($loan));
         
         return back()->with('success', 'Solicitud enviada correctamente.');
     }
 
-    // Acciones del admin
+    // Acciones del admin (Aprobar, Rechazar, Finalizar)
     public function updateStatus(Request $request, $id) {
         $loan = Loan::findOrFail($id);
         
@@ -64,37 +85,36 @@ class LoanController extends Controller
             $loan->admin_comment = $request->comment ?? 'Rechazado';
         } elseif ($request->action == 'finish') {
             $loan->status = 'finished';
+            
+            // Guardar observación de entrega
+            $observation = $request->comment ?? 'Entregado en tiempo y forma sin daños.';
+            $loan->admin_comment = "DEVOLUCIÓN: " . $observation;
+            
+            // Enviar correo de devolución (LoanReturned)
+            if ($loan->user->email) {
+                try {
+                    Mail::to($loan->user->email)->send(new LoanReturned($loan, $observation));
+                } catch (\Exception $e) {}
+            }
         }
         
         $loan->save();
 
-        // Si se aprobó o rechazó...
+        // Notificación de aprobación/rechazo (LoanStatusChanged y LoanStatusUpdate)
         if ($request->action == 'approve' || $request->action == 'reject') {
-            
-            // 1. Enviar Notificación Interna (Burbuja)
             $loan->user->notify(new LoanStatusChanged($loan));
-
-            // --- OJO AQUÍ: ESTO ES LO QUE FALTABA (EL CORREO) ---
+            
             if ($loan->user->email) {
-                // Usamos try-catch para que si falla el internet no rompa la página
-                try {
-                    Mail::to($loan->user->email)->send(new LoanStatusUpdate($loan));
-                } catch (\Exception $e) {
-                    // El correo falló, pero no detenemos el sistema
-                }
+                try { 
+                    Mail::to($loan->user->email)->send(new LoanStatusUpdate($loan)); 
+                } catch (\Exception $e) {}
             }
-            // ----------------------------------------------------
         }
 
-        // Limpiar la notificación amarilla del admin
-        $notification = auth()->user()->unreadNotifications
-                            ->where('data.loan_id', $loan->id) 
-                            ->first();
+        // Limpiar notificación amarilla del dashboard admin
+        $n = auth()->user()->unreadNotifications->where('data.loan_id', $loan->id)->first();
+        if($n) $n->markAsRead();
 
-        if ($notification) {
-            $notification->markAsRead();
-        }
-
-        return back()->with('success', 'Estado actualizado.');
+        return back()->with('success', 'Proceso completado.');
     }
 }

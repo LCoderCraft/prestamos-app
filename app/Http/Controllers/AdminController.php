@@ -10,9 +10,22 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $loans = Loan::with(['user', 'item'])->orderBy('created_at', 'desc')->get();
+        // 1. Préstamos Activos o Pendientes (Para la pestaña de Gestión)
+        $activeLoans = Loan::with(['user', 'item'])
+                           ->whereIn('status', ['pending', 'active'])
+                           ->orderBy('start_date', 'asc')
+                           ->get();
+
+        // 2. Historial (Finalizados, Rechazados, Cancelados)
+        $historyLoans = Loan::with(['user', 'item'])
+                            ->whereIn('status', ['finished', 'rejected', 'cancelled'])
+                            ->orderBy('updated_at', 'desc') // Lo más reciente arriba
+                            ->get();
+
         $items = Item::all();
-        return view('admin.dashboard', compact('loans', 'items'));
+
+        // Enviamos ambas variables a la vista
+        return view('admin.dashboard', compact('activeLoans', 'historyLoans', 'items'));
     }
 
     public function storeItem(Request $request) {
