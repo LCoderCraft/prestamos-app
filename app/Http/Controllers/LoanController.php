@@ -7,10 +7,15 @@ use App\Models\Loan;
 use App\Models\Item;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use App\Models\User; // Importante para buscar admins
-use Illuminate\Support\Facades\Notification; // Importante para enviar
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 use App\Notifications\NewLoanRequest;
 use App\Notifications\LoanStatusChanged;
+
+// --- OJO AQUÍ: Faltaban estas librerías para el correo ---
+use Illuminate\Support\Facades\Mail;
+use App\Mail\LoanStatusUpdate;
+// ---------------------------------------------------------
 
 class LoanController extends Controller
 {
@@ -24,10 +29,7 @@ class LoanController extends Controller
         ]);
 
         $start = Carbon::parse($request->date . ' ' . $request->time);
-        
-        // --- CORRECCIÓN AQUÍ: Agregamos (int) ---
         $end = $start->copy()->addHours((int) $request->duration);
-        // ----------------------------------------
         
         $item = Item::find($request->item_id);
 
@@ -43,7 +45,7 @@ class LoanController extends Controller
             'status' => 'pending'
         ]);
 
-        // Notificaciones al Admin
+        // Notificaciones al Admin (Burbuja)
         $admins = User::where('role', 'admin')->get();
         Notification::send($admins, new NewLoanRequest($loan));
         
@@ -51,10 +53,9 @@ class LoanController extends Controller
     }
 
     // Acciones del admin
-public function updateStatus(Request $request, $id) {
+    public function updateStatus(Request $request, $id) {
         $loan = Loan::findOrFail($id);
         
-        // 1. Lógica de cambio de estado (Aprobar/Rechazar)
         if ($request->action == 'approve') {
             $loan->status = 'active';
             $loan->admin_comment = $request->comment ?? 'Aprobado';
@@ -67,23 +68,32 @@ public function updateStatus(Request $request, $id) {
         
         $loan->save();
 
-        // 2. Notificar al USUARIO (Tu código actual)
+        // Si se aprobó o rechazó...
         if ($request->action == 'approve' || $request->action == 'reject') {
+            
+            // 1. Enviar Notificación Interna (Burbuja)
             $loan->user->notify(new LoanStatusChanged($loan));
+
+            // --- OJO AQUÍ: ESTO ES LO QUE FALTABA (EL CORREO) ---
+            if ($loan->user->email) {
+                // Usamos try-catch para que si falla el internet no rompa la página
+                try {
+                    Mail::to($loan->user->email)->send(new LoanStatusUpdate($loan));
+                } catch (\Exception $e) {
+                    // El correo falló, pero no detenemos el sistema
+                }
+            }
+            // ----------------------------------------------------
         }
 
-        // --- [NUEVO] --- 
-        // 3. LIMPIAR LA NOTIFICACIÓN DEL ADMIN AUTOMÁTICAMENTE
-        // Buscamos en las notificaciones no leídas del admin aquella que coincida con este loan_id
+        // Limpiar la notificación amarilla del admin
         $notification = auth()->user()->unreadNotifications
                             ->where('data.loan_id', $loan->id) 
                             ->first();
 
-        // Si existe esa notificación, la marcamos como leída (desaparece de la lista amarilla)
         if ($notification) {
             $notification->markAsRead();
         }
-        // -----------------------------------------------------
 
         return back()->with('success', 'Estado actualizado.');
     }
