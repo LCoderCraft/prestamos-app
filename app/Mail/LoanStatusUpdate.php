@@ -16,13 +16,11 @@ class LoanStatusUpdate extends Mailable
 
     public $loan;
 
-    // Recibimos el préstamo para usar sus datos en el correo
     public function __construct(Loan $loan)
     {
         $this->loan = $loan;
     }
 
-    // Asunto del correo
     public function envelope(): Envelope
     {
         $status = $this->loan->status == 'active' ? 'APROBADA' : 'RECHAZADA';
@@ -31,7 +29,6 @@ class LoanStatusUpdate extends Mailable
         );
     }
 
-    // Definimos qué archivo HTML (Vista) se va a enviar
     public function content(): Content
     {
         return new Content(

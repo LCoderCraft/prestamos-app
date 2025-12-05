@@ -17,7 +17,7 @@ class NewLoanRequest extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database']; // Guardar en BD
+        return ['database']; 
     }
 
     public function toArray(object $notifiable): array

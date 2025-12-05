@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\IsAdmin; // <--- 1. IMPORTANTE: Agrega esto aquí
+use App\Http\Middleware\IsAdmin;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,7 +13,6 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         
-        // 2. AGREGA ESTE BLOQUE:
         $middleware->alias([
             'admin' => IsAdmin::class,
         ]);

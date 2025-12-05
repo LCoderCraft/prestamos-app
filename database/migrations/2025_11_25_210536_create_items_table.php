@@ -13,9 +13,9 @@ public function up(): void
 {
     Schema::create('items', function (Blueprint $table) {
         $table->id();
-        $table->string('name');         // <--- ESTO FALTABA
-        $table->integer('total_count'); // <--- ESTO FALTABA
-        $table->text('photo_url')->nullable(); // <--- ESTO FALTABA
+        $table->string('name');      
+        $table->integer('total_count'); 
+        $table->text('photo_url')->nullable(); 
         $table->timestamps();
     });
 }

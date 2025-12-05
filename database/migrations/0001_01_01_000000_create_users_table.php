@@ -13,10 +13,10 @@ public function up(): void
 {
     Schema::create('users', function (Blueprint $table) {
         $table->id();
-        $table->string('username')->unique(); // <--- ESTO FALTABA
+        $table->string('username')->unique(); 
         $table->string('email')->unique();
-        $table->string('phone')->nullable();  // <--- ESTO FALTABA
-        $table->string('role')->default('user'); // <--- ESTO FALTABA
+        $table->string('phone')->nullable(); 
+        $table->string('role')->default('user'); 
         $table->string('password');
         $table->rememberToken();
         $table->timestamps();

@@ -10,15 +10,12 @@ class AdminController extends Controller
 {
    public function index()
     {
-        // 1. GESTIÓN: Ordenamos para que 'pending' salga ANTES que 'active'
-        // y dentro de eso, las más recientes primero.
         $activeLoans = Loan::with(['user', 'item'])
                            ->whereIn('status', ['pending', 'active'])
-                           ->orderByRaw("FIELD(status, 'pending') DESC") // Truco SQL: Pendientes arriba
-                           ->orderBy('created_at', 'asc') // Las más antiguas primero para atenderlas en orden
+                           ->orderByRaw("FIELD(status, 'pending') DESC")
+                           ->orderBy('created_at', 'asc') 
                            ->get();
 
-        // 2. HISTORIAL
         $historyLoans = Loan::with(['user', 'item'])
                             ->whereIn('status', ['finished', 'rejected', 'cancelled'])
                             ->orderBy('updated_at', 'desc')
@@ -34,7 +31,6 @@ class AdminController extends Controller
         return back()->with('success', 'Producto agregado.');
     }
 
-    // Actualizar producto (Cantidad, Foto, Disponibilidad)
     public function updateItem(Request $request, $id) {
         $item = Item::findOrFail($id);
 
@@ -47,7 +43,6 @@ class AdminController extends Controller
         $item->name = $request->name;
         $item->total_count = $request->total_count;
         $item->photo_url = $request->photo_url;
-        // El checkbox envía "1" si está marcado, o nada si no lo está.
         $item->is_active = $request->has('is_active'); 
 
         $item->save();

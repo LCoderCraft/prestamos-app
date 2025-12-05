@@ -5,11 +5,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Auth; // <--- AGREGAR ESTA LÍNEA IMPORTANTE
+use Illuminate\Support\Facades\Auth; 
 
-// --- RUTA PRINCIPAL MODIFICADA ---
 Route::get('/', function () {
-    // Si hay una sesión abierta, la cerramos forzosamente
     if (Auth::check()) {
         Auth::logout();
         request()->session()->invalidate();
@@ -17,22 +15,16 @@ Route::get('/', function () {
     }
     return redirect()->route('login');
 });
-// ---------------------------------
 
 Route::middleware('auth')->group(function () {
-    // ... (el resto de tu código sigue igual)
-    // ... dentro del grupo middleware auth ...
     Route::put('/profile/update-credentials', [DashboardController::class, 'updateSettings'])->name('profile.update_credentials');
-    // --- Rutas de Usuario Normal ---
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/loans', [LoanController::class, 'store'])->name('loans.store');
 
-    // --- Perfil ---
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::delete('/profile', action: [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // --- Rutas de Administrador ---
     Route::middleware('admin')->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
         Route::post('/admin/loans/{id}', [LoanController::class, 'updateStatus'])->name('admin.loans.update');
@@ -45,7 +37,6 @@ Route::middleware('auth')->group(function () {
     return back();
     })->name('notifications.read');
 
-        // Ruta para consultar notificaciones en tiempo real (AJAX)
     Route::get('/notifications/check', function () {
         $user = auth()->user();
         $unread = $user->unreadNotifications;

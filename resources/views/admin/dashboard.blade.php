@@ -244,7 +244,6 @@
             document.getElementById('tab-' + tab).className = "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-indigo-600 border-indigo-500";
         }
 
-        // -- MODALES --
         function openReturnModal(id, user, item) {
             document.getElementById('return-user').textContent = user;
             let url = "{{ route('admin.loans.update', ':id') }}".replace(':id', id);
@@ -268,7 +267,6 @@
             document.getElementById('edit-modal').classList.remove('hidden');
         }
 
-        // -- POLLING & TOAST --
         let lastCount = {{ auth()->user()->unreadNotifications->count() }};
         const toast = document.getElementById('toast-notification');
         const msgElement = document.getElementById('toast-message');

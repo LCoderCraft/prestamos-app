@@ -14,33 +14,26 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Muestra la vista de registro.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Procesa la solicitud de registro.
-     */
+    
     public function store(Request $request): RedirectResponse
     {
-        // 1. Validaciones (Aquí corregimos para que coincida con tu formulario)
         $request->validate([
-            'username' => ['required', 'string', 'max:255', 'unique:'.User::class], // Antes buscaba 'name'
+            'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'phone' => ['required', 'string', 'max:20'], // Agregamos validación para teléfono
+            'phone' => ['required', 'string', 'max:20'], 
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // 2. Creación del Usuario en la BD
         $user = User::create([
-            'username' => $request->username, // Guardamos el username
+            'username' => $request->username, 
             'email' => $request->email,
-            'phone' => $request->phone,       // Guardamos el teléfono
-            'role' => 'user',                 // Asignamos rol por defecto
+            'phone' => $request->phone,       
+            'role' => 'user',                 
             'password' => Hash::make($request->password),
         ]);
 

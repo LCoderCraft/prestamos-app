@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
 {
     Schema::table('items', function (Blueprint $table) {
-        $table->boolean('is_active')->default(true); // true = disponible, false = oculto
+        $table->boolean('is_active')->default(true); 
     });
 }
 
