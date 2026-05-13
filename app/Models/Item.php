@@ -4,12 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str; // <-- 1. Importación necesaria para generar texto aleatorio
 
 class Item extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'total_count', 'photo_url', 'is_active'];
+    // <-- 2. Agregamos 'barcode' al arreglo para que Laravel permita guardarlo
+    protected $fillable = ['name', 'total_count', 'photo_url', 'is_active', 'barcode']; 
+
+    // <-- 3. El "Cerebro" automático: se ejecuta justo antes de guardar en la base de datos
+    protected static function booted()
+    {
+        static::creating(function ($item) {
+            // Genera el código automáticamente con el prefijo de la universidad
+            $item->barcode = 'UAS-INV-' . strtoupper(Str::random(6));
+        });
+    }
 
     public function loans() {
         return $this->hasMany(Loan::class);

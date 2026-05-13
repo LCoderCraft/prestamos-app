@@ -25,16 +25,23 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', action: [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // =========================================================
+    // RUTAS EXCLUSIVAS PARA ADMINISTRADORES
+    // =========================================================
     Route::middleware('admin')->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
         Route::post('/admin/loans/{id}', [LoanController::class, 'updateStatus'])->name('admin.loans.update');
         Route::post('/admin/items', [AdminController::class, 'storeItem'])->name('admin.items.store');
         Route::put('/admin/items/{id}', [App\Http\Controllers\AdminController::class, 'updateItem'])->name('admin.items.update');
+        
+        // Vistas de demostración para el sistema de préstamos
+        Route::view('/admin/reportes', 'reportes')->name('admin.reportes.index');
+        Route::view('/admin/codigos', 'codigos')->name('admin.codigos.index');
     });
 
     Route::get('/notifications/mark-as-read', function () {
-    auth()->user()->unreadNotifications->markAsRead();
-    return back();
+        auth()->user()->unreadNotifications->markAsRead();
+        return back();
     })->name('notifications.read');
 
     Route::get('/notifications/check', function () {
@@ -47,6 +54,15 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('notifications.check');
 
+});
+
+Route::get('/generar-codigos-faltantes', function() {
+    $items = App\Models\Item::whereNull('barcode')->get();
+    foreach($items as $item) {
+        $item->barcode = 'UAS-INV-' . strtoupper(\Illuminate\Support\Str::random(6));
+        $item->save();
+    }
+    return "¡Listo! Se generaron " . $items->count() . " códigos nuevos para los equipos existentes.";
 });
 
 require __DIR__.'/auth.php';
