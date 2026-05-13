@@ -44,7 +44,7 @@
                         @foreach(auth()->user()->unreadNotifications as $notification)
                             <li class="text-sm text-amber-700 flex items-center bg-amber-100 px-3 py-1 rounded-md w-fit">
                                 <i class="fa-solid fa-caret-right mr-2 text-amber-500"></i>
-                                {{ $notification->data['message'] }} <strong class="ml-1">({{ $notification->data['item'] }})</strong>
+                                {{ $notification->data['message'] }} <strong class="ml-1">({{ $notification->data['item'] ?? '' }})</strong>
                             </li>
                         @endforeach
                     </ul>
@@ -66,6 +66,15 @@
             </div>
         @endif
 
+        <div class="flex flex-wrap gap-4 mb-6">
+            <a href="{{ route('admin.rooms.index') }}" class="bg-white border border-indigo-200 text-indigo-700 px-4 py-2 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-computer"></i> Centros de Cómputo
+            </a>
+            <a href="{{ route('support.chat.index') }}" class="bg-white border border-emerald-200 text-emerald-700 px-4 py-2 rounded-xl font-bold hover:bg-emerald-600 hover:text-white transition flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-headset"></i> Chat de Ayuda
+            </a>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
                 <div class="bg-blue-100 text-blue-600 p-3 rounded-lg"><i class="fa-solid fa-box-open text-xl"></i></div>
@@ -77,7 +86,7 @@
             </div>
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
                 <div class="bg-indigo-100 text-indigo-600 p-3 rounded-lg"><i class="fa-solid fa-boxes-stacked text-xl"></i></div>
-                <div><p class="text-sm text-gray-500 font-semibold">Equipos en Inventario</p><p class="text-2xl font-bold text-gray-800">Gestionar ➔</p></div>
+                <div><p class="text-sm text-gray-500 font-semibold">Equipos en Inventario</p><p class="text-2xl font-bold text-gray-800"><button onclick="switchTab('inventory')" class="hover:text-indigo-600 transition">Gestionar ➔</button></p></div>
             </div>
         </div>
 
@@ -97,6 +106,13 @@
                 </button>
                 <button onclick="switchTab('codigos')" id="tab-codigos" class="whitespace-nowrap py-3 px-4 rounded-t-lg font-medium text-sm text-gray-500 hover:text-indigo-600 hover:bg-gray-50 transition-colors border-b-2 border-transparent">
                     <i class="fa-solid fa-barcode mr-2"></i>Códigos de Barras
+                </button>
+                <button onclick="switchTab('rooms')" id="tab-rooms" class="whitespace-nowrap py-3 px-4 rounded-t-lg font-medium text-sm text-gray-500 hover:text-indigo-600 hover:bg-gray-50 transition-colors border-b-2 border-transparent">
+                    <i class="fa-solid fa-computer mr-2"></i>Centros de Cómputo
+                </button>
+                <button onclick="switchTab('chat')" id="tab-chat" class="whitespace-nowrap py-3 px-4 rounded-t-lg font-medium text-sm text-gray-500 hover:text-indigo-600 hover:bg-gray-50 transition-colors border-b-2 border-transparent">
+                    <i class="fa-solid fa-headset mr-2"></i>Chat de Ayuda
+                    <span id="chat-badge-admin" class="ml-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full hidden">0</span>
                 </button>
             </nav>
         </div>
@@ -360,6 +376,83 @@
                     </div>
                 </div>
             </div>
+
+            <div id="content-rooms" class="hidden animate-fadeIn">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800"><i class="fa-solid fa-computer text-indigo-600 mr-2"></i>Centros de Cómputo</h2>
+                    <a href="{{ route('admin.rooms.index') }}" class="bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-bold hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i> Ir a gestión completa
+                    </a>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    @php
+                        $rooms = App\Models\ComputerRoom::all();
+                    @endphp
+                    @forelse($rooms as $room)
+                        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="bg-indigo-100 text-indigo-600 p-2.5 rounded-lg">
+                                    <i class="fa-solid fa-display text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800">{{ $room->name }}</h3>
+                                    <p class="text-xs text-gray-500">{{ $room->capacity }} equipos</p>
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-400">{{ $room->location ?? 'Sin ubicación' }}</div>
+                        </div>
+                    @empty
+                        <div class="col-span-full text-center py-8 text-gray-400">
+                            <i class="fa-solid fa-building text-4xl mb-2"></i>
+                            <p>No hay centros de cómputo registrados</p>
+                            <a href="{{ route('admin.rooms.index') }}" class="text-indigo-600 text-sm font-medium mt-2 inline-block">Gestionar →</a>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <div id="content-chat" class="hidden animate-fadeIn">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800"><i class="fa-solid fa-headset text-indigo-600 mr-2"></i>Chat de Ayuda</h2>
+                    <a href="{{ route('support.chat.index') }}" class="bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-bold hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-comment-dots"></i> Ir al chat completo
+                    </a>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                    @php
+                        $chats = App\Models\SupportChat::with(['user', 'lastMessage'])
+                            ->where('status', 'open')
+                            ->orderBy('last_message_at', 'desc')
+                            ->take(5)
+                            ->get();
+                    @endphp
+                    @forelse($chats as $chat)
+                        <a href="{{ route('admin.support.chat', $chat->id) }}" class="flex items-start gap-4 p-4 border-b border-gray-100 hover:bg-gray-50 transition group">
+                            <div class="bg-indigo-100 text-indigo-600 p-2.5 rounded-full flex-shrink-0">
+                                <i class="fa-solid fa-user text-lg"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start">
+                                    <span class="font-bold text-gray-800 text-sm">{{ $chat->user->username }}</span>
+                                    <span class="text-[10px] text-gray-400">{{ $chat->last_message_at ? $chat->last_message_at->diffForHumans() : '' }}</span>
+                                </div>
+                                <p class="text-xs text-gray-500 truncate">{{ $chat->subject }}</p>
+                                <p class="text-xs text-gray-400 truncate mt-0.5">{{ $chat->lastMessage?->body ?? 'Sin mensajes' }}</p>
+                            </div>
+                            @php $unread = $chat->unreadAdminMessages()->count(); @endphp
+                            @if($unread > 0)
+                                <span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full flex-shrink-0">{{ $unread }}</span>
+                            @endif
+                        </a>
+                    @empty
+                        <div class="text-center py-10 text-gray-400">
+                            <i class="fa-solid fa-inbox text-4xl mb-2"></i>
+                            <p class="text-sm">No hay chats activos</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -437,12 +530,12 @@
     </div>
 
     <div class="fixed bottom-4 left-4 z-40">
-        <button onclick="alert('Centro de Soporte FIM.\nPara modificar plantillas o agregar usuarios administrativos, comuníquese con el depto. de sistemas.')" class="bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 hover:shadow-xl transition-all duration-300 flex items-center group">
+        <a href="{{ route('support.chat.index') }}" class="bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 hover:shadow-xl transition-all duration-300 flex items-center group">
             <i class="fa-solid fa-headset text-xl"></i>
             <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap group-hover:ml-2 font-medium">
                 Soporte FIM
             </span>
-        </button>
+        </a>
     </div>
 
     <div id="toast-notification" class="fixed bottom-5 right-5 bg-white border-l-4 border-amber-500 shadow-2xl rounded-lg p-4 transform translate-y-20 opacity-0 transition-all duration-500 z-50 hidden flex items-center gap-4 max-w-sm">
@@ -463,30 +556,22 @@
 
     <script>
         function switchTab(tab) {
-            document.getElementById('content-loans').classList.add('hidden');
-            document.getElementById('content-history').classList.add('hidden');
-            document.getElementById('content-inventory').classList.add('hidden');
-            document.getElementById('content-reportes').classList.add('hidden');
-            document.getElementById('content-codigos').classList.add('hidden');
-            
-            const baseClass = "whitespace-nowrap py-3 px-4 rounded-t-lg font-medium text-sm text-gray-500 hover:text-indigo-600 hover:bg-gray-50 transition-colors border-b-2 border-transparent";
-            document.getElementById('tab-loans').className = baseClass;
-            document.getElementById('tab-history').className = baseClass;
-            document.getElementById('tab-inventory').className = baseClass;
-            document.getElementById('tab-reportes').className = baseClass;
-            document.getElementById('tab-codigos').className = baseClass;
-
-            document.getElementById('content-' + tab).classList.remove('hidden');
+            const tabs = ['loans', 'history', 'inventory', 'reportes', 'codigos', 'rooms', 'chat'];
+            tabs.forEach(t => {
+                document.getElementById('content-' + t)?.classList.add('hidden');
+                const el = document.getElementById('tab-' + t);
+                if (el) {
+                    el.className = "whitespace-nowrap py-3 px-4 rounded-t-lg font-medium text-sm text-gray-500 hover:text-indigo-600 hover:bg-gray-50 transition-colors border-b-2 border-transparent";
+                }
+            });
+            document.getElementById('content-' + tab)?.classList.remove('hidden');
             document.getElementById('tab-' + tab).className = "whitespace-nowrap py-3 px-4 rounded-t-lg font-bold text-sm text-indigo-700 bg-indigo-50 border-b-2 border-indigo-600 transition-colors";
         }
-
         function openReturnModal(id, user, item) {
             document.getElementById('return-user').textContent = user;
-            let url = "{{ route('admin.loans.update', ':id') }}".replace(':id', id);
-            document.getElementById('return-form').action = url;
+            document.getElementById('return-form').action = "{{ route('admin.loans.update', ':id') }}".replace(':id', id);
             document.getElementById('return-modal').classList.remove('hidden');
         }
-
         function confirmReject(loanId) {
             let reason = prompt("Por favor, ingrese el motivo del rechazo:");
             if (reason) {
@@ -500,7 +585,6 @@
             document.getElementById('edit-count').value = item.total_count;
             document.getElementById('edit-photo').value = item.photo_url || '';
             document.getElementById('edit-active').checked = item.is_active == 1;
-            
             if (item.barcode) {
                 document.getElementById('edit-barcode-img').src = "https://barcode.tec-it.com/barcode.ashx?data=" + item.barcode + "&code=Code128";
                 document.getElementById('edit-barcode-img').classList.remove('hidden');
@@ -509,17 +593,39 @@
                 document.getElementById('edit-barcode-img').classList.add('hidden');
                 document.getElementById('edit-barcode-text').textContent = "Sin código asignado";
             }
-
-            let url = "{{ route('admin.items.update', ':id') }}".replace(':id', item.id);
-            document.getElementById('edit-form').action = url;
+            document.getElementById('edit-form').action = "{{ route('admin.items.update', ':id') }}".replace(':id', item.id);
             document.getElementById('edit-modal').classList.remove('hidden');
         }
-
-        let lastCount = {{ auth()->user()->unreadNotifications->count() }};
+        // --- REPRODUCIR SONIDO ---
+        function playNotificationSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                // Sonido tipo "ding-ding"
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.setValueAtTime(660, ctx.currentTime + 0.12);
+                osc.frequency.setValueAtTime(880, ctx.currentTime + 0.24);
+                gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.5);
+            } catch (e) { /* fallo silencioso */ }
+        }
+        // --- TOAST DE NOTIFICACIONES ---
+        let lastCount = {{ auth()->user()->unreadNotifications->count() ?? 0 }};
+        let lastChatCount = 0;
         const toast = document.getElementById('toast-notification');
         const msgElement = document.getElementById('toast-message');
-
-        function showToast(message) {
+        function showToast(message, isChat = false) {
+            toast.className = 'fixed bottom-5 right-5 shadow-2xl rounded-lg p-4 transform translate-y-20 opacity-0 transition-all duration-500 z-50 flex items-center gap-4 max-w-sm';
+            if (isChat) {
+                toast.classList.add('bg-purple-50', 'border-l-4', 'border-purple-500');
+            } else {
+                toast.classList.add('bg-white', 'border-l-4', 'border-amber-500');
+            }
             msgElement.textContent = message;
             toast.classList.remove('hidden');
             setTimeout(() => { toast.classList.remove('translate-y-20', 'opacity-0'); }, 100);
@@ -529,18 +635,42 @@
             toast.classList.add('translate-y-20', 'opacity-0');
             setTimeout(() => { toast.classList.add('hidden'); }, 500);
         }
-
+        // --- POLLING DE NOTIFICACIONES (préstamos + chat) ---
         setInterval(() => {
+            // Notificaciones de Laravel (préstamos)
             fetch('{{ route("notifications.check") }}')
                 .then(res => res.json())
                 .then(data => {
                     if (data.count > lastCount) {
                         lastCount = data.count;
-                        if(data.latest) showToast(data.latest.message);
+                        if (data.latest) {
+                            showToast(data.latest.message, false);
+                            playNotificationSound();
+                        }
                         setTimeout(() => window.location.reload(), 2500);
                     }
-                });
+                })
+                .catch(() => {});
+            // Notificaciones de chat (sonido + badge)
+            fetch('{{ route("support.chat.unread") }}')
+                .then(res => res.json())
+                .then(data => {
+                    const badge = document.getElementById('chat-badge-admin');
+                    if (data.count > 0) {
+                        if (badge) { badge.classList.remove('hidden'); badge.textContent = data.count; }
+                        if (data.count > lastChatCount) {
+                            lastChatCount = data.count;
+                            showToast('💬 Nuevo mensaje de chat de ayuda', true);
+                            playNotificationSound();
+                        }
+                    } else {
+                        if (badge) badge.classList.add('hidden');
+                    }
+                })
+                .catch(() => {});
         }, 4000);
+        // Inicializar lastChatCount
+        fetch('{{ route("support.chat.unread") }}').then(r => r.json()).then(d => { lastChatCount = d.count; }).catch(() => {});
     </script>
 </body>
 </html>

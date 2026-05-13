@@ -1,14 +1,20 @@
-public function up()
+# Wrote C:\prestamos-app\database\migrations\2026_03_18_065806_add_barcode_to_items_table.php
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+return new class extends Migration
 {
-    Schema::table('items', function (Blueprint $table) {
-        // Agregamos la columna barcode, permitiendo nulos temporalmente para los existentes
-        $table->string('barcode')->unique()->nullable()->after('name');
-    });
-}
-
-public function down()
-{
-    Schema::table('items', function (Blueprint $table) {
-        $table->dropColumn('barcode');
-    });
-}
+    public function up(): void
+    {
+        Schema::table('items', function (Blueprint $table) {
+            $table->string('barcode')->unique()->nullable()->after('name');
+        });
+    }
+    public function down(): void
+    {
+        Schema::table('items', function (Blueprint $table) {
+            $table->dropColumn('barcode');
+        });
+    }
+};

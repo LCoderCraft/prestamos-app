@@ -74,6 +74,15 @@
                 <i class="fa-solid fa-boxes-stacked text-indigo-600 mr-3"></i>Equipos Disponibles
             </h2>
             
+            <div class="flex gap-3 mb-6 flex-wrap">
+    <a href="{{ route('rooms.index') }}" class="bg-white border border-indigo-200 text-indigo-700 px-5 py-3 rounded-xl font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-colors shadow-sm flex items-center gap-2">
+        <i class="fa-solid fa-computer"></i> Reservar Centro de Cómputo
+    </a>
+    <a href="{{ route('support.chat.index') }}" class="bg-white border border-emerald-200 text-emerald-700 px-5 py-3 rounded-xl font-bold hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-colors shadow-sm flex items-center gap-2">
+        <i class="fa-solid fa-headset"></i> Chat de Ayuda
+    </a>
+</div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach($items as $item)
                 <div class="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col overflow-hidden group">

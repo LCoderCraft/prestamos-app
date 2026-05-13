@@ -65,4 +65,29 @@ Route::get('/generar-codigos-faltantes', function() {
     return "¡Listo! Se generaron " . $items->count() . " códigos nuevos para los equipos existentes.";
 });
 
+// =========================================================
+// MÓDULO: CENTROS DE CÓMPUTO (RESERVACIONES)
+// =========================================================
+Route::middleware('auth')->group(function () {
+    Route::get('/rooms', [App\Http\Controllers\RoomController::class, 'index'])->name('rooms.index');
+    Route::post('/rooms/reserve', [App\Http\Controllers\RoomController::class, 'store'])->name('rooms.store');
+    Route::middleware('admin')->group(function () {
+        Route::get('/admin/rooms', [App\Http\Controllers\AdminRoomController::class, 'index'])->name('admin.rooms.index');
+        Route::post('/admin/rooms', [App\Http\Controllers\AdminRoomController::class, 'storeRoom'])->name('admin.rooms.store');
+        Route::put('/admin/rooms/{id}', [App\Http\Controllers\AdminRoomController::class, 'updateRoom'])->name('admin.rooms.update');
+        Route::delete('/admin/rooms/{id}', [App\Http\Controllers\AdminRoomController::class, 'destroyRoom'])->name('admin.rooms.destroy');
+        Route::post('/admin/rooms/{id}/status', [App\Http\Controllers\AdminRoomController::class, 'updateStatus'])->name('admin.rooms.status');
+        Route::get('/admin/support/chat/{id}', [App\Http\Controllers\SupportChatController::class, 'show'])->name('admin.support.chat');
+    });
+    // =========================================================
+    // MÓDULO: CHAT DE AYUDA
+    // =========================================================
+    Route::get('/support/chat', [App\Http\Controllers\SupportChatController::class, 'index'])->name('support.chat.index');
+    Route::post('/support/chat', [App\Http\Controllers\SupportChatController::class, 'store'])->name('support.chat.store');
+    Route::get('/support/chat/{id}', [App\Http\Controllers\SupportChatController::class, 'show'])->name('support.chat.show');
+    Route::post('/support/chat/{id}/message', [App\Http\Controllers\SupportChatController::class, 'sendMessage'])->name('support.chat.message');
+    Route::get('/support/chat/{id}/messages', [App\Http\Controllers\SupportChatController::class, 'messages'])->name('support.chat.messages');
+    Route::get('/support/chat/unread/count', [App\Http\Controllers\SupportChatController::class, 'unreadCount'])->name('support.chat.unread');
+});
+
 require __DIR__.'/auth.php';
