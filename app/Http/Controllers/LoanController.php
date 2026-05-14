@@ -92,8 +92,8 @@ public function store(Request $request)
         
         $loan->save();
 
-        if ($request->action == 'approve' || $request->action == 'reject') {
-            $loan->user->notify(new LoanStatusChanged($loan));
+            if ($request->action == 'approve' || $request->action == 'reject' || $request->action == 'finish') {
+                $loan->user->notify(new LoanStatusChanged($loan));
             
             if ($loan->user->email) {
                 try { 

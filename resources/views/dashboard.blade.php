@@ -120,7 +120,7 @@
             
             <div class="flex gap-3 mb-6 flex-wrap">
                 <a href="{{ route('rooms.index') }}" class="bg-white border border-indigo-200 text-indigo-700 px-5 py-3 rounded-xl font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-colors shadow-sm flex items-center gap-2">
-                    <i class="fa-solid fa-computer"></i> Reservar Centro de Cómputo
+                    <i class="fa-solid fa-computer"></i> Reservar Centro de Computo
                 </a>
                 <a href="{{ route('support.chat.index') }}" class="bg-white border border-emerald-200 text-emerald-700 px-5 py-3 rounded-xl font-bold hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-colors shadow-sm flex items-center gap-2">
                     <i class="fa-solid fa-headset"></i> Chat de Ayuda
@@ -219,7 +219,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            @forelse($myLoans->where('status', '!=', 'finished') as $loan)
+                            @foreach($myLoans->where('status', '!=', 'finished') as $loan)
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-4 py-3 font-medium text-gray-800 text-sm">{{ $loan->item->name }}</td>
                                 <td class="px-4 py-3 text-xs text-gray-600">
@@ -241,14 +241,39 @@
                             @if($loan->admin_comment && $loan->status == 'rejected')
                             <tr class="bg-red-50/50"><td colspan="3" class="px-4 py-2 text-xs text-red-600 italic border-t-0"><i class="fa-solid fa-comment-dots mr-1"></i>Motivo: {{ $loan->admin_comment }}</td></tr>
                             @endif
+                            @endforeach
+
+                            @forelse($myRooms as $res)
+                            <tr class="hover:bg-gray-50 transition-colors bg-indigo-50/30">
+                                <td class="px-4 py-3 font-medium text-gray-800 text-sm flex items-center gap-1">
+                                    <i class="fa-solid fa-computer text-indigo-400 text-xs"></i>
+                                    {{ $res->computerRoom->name }}
+                                </td>
+                                <td class="px-4 py-3 text-xs text-gray-600">
+                                    <div class="font-bold">{{ $res->start_date->format('d/m/Y') }}</div>
+                                    <div>{{ $res->start_date->format('H:i') }} - {{ $res->end_date->format('H:i') }}</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="px-2 py-1 text-[10px] uppercase tracking-wider font-bold rounded-full 
+                                    {{ $res->status === 'active' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 
+                                      'bg-amber-100 text-amber-800 border border-amber-200' }}">
+                                        @if($res->status=='pending') <i class="fa-solid fa-hourglass-half mr-1"></i> Pendiente
+                                        @elseif($res->status=='active') <i class="fa-solid fa-circle-play mr-1"></i> Activo
+                                        @endif
+                                    </span>
+                                </td>
+                            </tr>
                             @empty
+                            @endforelse
+
+                            @if($myLoans->where('status', '!=', 'finished')->count() == 0 && $myRooms->count() == 0)
                             <tr>
                                 <td colspan="3" class="px-4 py-10 text-center">
                                     <i class="fa-solid fa-box-open text-gray-300 text-4xl mb-2"></i>
                                     <p class="text-sm text-gray-500 font-medium">No tienes solicitudes activas o en espera.</p>
                                 </td>
                             </tr>
-                            @endforelse
+                            @endif
                         </tbody>
                     </table>
                 </div>
@@ -670,6 +695,23 @@
             setTimeout(() => { toast.classList.add('hidden'); }, 500);
         }
 
+        function playNotificationSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.setValueAtTime(660, ctx.currentTime + 0.12);
+                osc.frequency.setValueAtTime(880, ctx.currentTime + 0.24);
+                gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.5);
+            } catch (e) { /* fallo silencioso */ }
+        }
+
         setInterval(() => {
             fetch('{{ route("notifications.check") }}')
                 .then(response => response.json())
@@ -678,6 +720,7 @@
                         lastCount = data.count;
                         if (data.latest) {
                             showToast(data.latest.message);
+                            playNotificationSound();
                         }
                         // Recargar la página suavemente para ver cambios en la tabla
                         setTimeout(() => { window.location.reload(); }, 2000);

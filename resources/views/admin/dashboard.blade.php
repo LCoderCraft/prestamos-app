@@ -124,6 +124,7 @@
                 </button>
                 <button onclick="switchTab('rooms')" id="tab-rooms" class="whitespace-nowrap py-3 px-4 rounded-t-lg font-medium text-sm text-gray-500 hover:text-indigo-600 hover:bg-gray-50 transition-colors border-b-2 border-transparent">
                     <i class="fa-solid fa-computer mr-2"></i>Centros de Cómputo
+                    <span id="rooms-badge-admin" class="ml-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full hidden">0</span>
                 </button>
                 <button onclick="switchTab('chat')" id="tab-chat" class="whitespace-nowrap py-3 px-4 rounded-t-lg font-medium text-sm text-gray-500 hover:text-indigo-600 hover:bg-gray-50 transition-colors border-b-2 border-transparent">
                     <i class="fa-solid fa-headset mr-2"></i>Chat de Ayuda
@@ -711,7 +712,7 @@
             toast.classList.add('translate-y-20', 'opacity-0');
             setTimeout(() => { toast.classList.add('hidden'); }, 500);
         }
-        // --- POLLING DE NOTIFICACIONES (préstamos + chat) ---
+        // --- POLLING DE NOTIFICACIONES (préstamos + chat + rooms) ---
         setInterval(() => {
             // Notificaciones de Laravel (préstamos)
             fetch('{{ route("notifications.check") }}')
@@ -739,6 +740,18 @@
                             showAdminToast('Nuevo mensaje de chat de ayuda', true);
                             playNotificationSound();
                         }
+                    } else {
+                        if (badge) badge.classList.add('hidden');
+                    }
+                })
+                .catch(() => {});
+            // Notificaciones de reservaciones (badge)
+            fetch('/admin/rooms/pending-count')
+                .then(res => res.json())
+                .then(data => {
+                    const badge = document.getElementById('rooms-badge-admin');
+                    if (data.count > 0) {
+                        if (badge) { badge.classList.remove('hidden'); badge.textContent = data.count; }
                     } else {
                         if (badge) badge.classList.add('hidden');
                     }
@@ -823,7 +836,17 @@
             const select = document.getElementById('admin-barcode-select');
             const id = select.value;
             if (!id) return;
-            window.location.href = '{{ url("admin/codigos") }}/' + id + '/regenerar';
+            fetch('{{ url("admin/codigos") }}/' + id + '/regenerar', { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const opt = select.options[select.selectedIndex];
+                        opt.text = data.name + ' (' + data.barcode + ')';
+                        opt.dataset.barcode = data.barcode;
+                        updateAdminPreview();
+                        showAdminToast('Código regenerado: ' + data.barcode);
+                    }
+                });
         }
     </script>
 </body>

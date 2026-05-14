@@ -27,7 +27,7 @@ class RoomController extends Controller
             $weekDays[] = $startOfWeek->copy()->addDays($i);
         }
         $hours = [];
-        for ($h = 7; $h <= 18; $h++) {
+        for ($h = 7; $h <= 20; $h++) {
             $hours[] = $h;
         }
         return view('rooms.index', compact('rooms', 'selectedRoomId', 'weekDays', 'hours', 'reservations', 'startOfWeek', 'endOfWeek'));

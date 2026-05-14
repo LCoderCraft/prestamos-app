@@ -79,6 +79,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/admin/rooms/{id}', [App\Http\Controllers\AdminRoomController::class, 'updateRoom'])->name('admin.rooms.update');
         Route::delete('/admin/rooms/{id}', [App\Http\Controllers\AdminRoomController::class, 'destroyRoom'])->name('admin.rooms.destroy');
         Route::post('/admin/rooms/{id}/status', [App\Http\Controllers\AdminRoomController::class, 'updateStatus'])->name('admin.rooms.status');
+        Route::get('/admin/rooms/pending-count', [App\Http\Controllers\AdminRoomController::class, 'pendingCount'])->name('admin.rooms.pendingCount');
         Route::get('/admin/support/chat/{id}', [App\Http\Controllers\SupportChatController::class, 'show'])->name('admin.support.chat');
     });
     // =========================================================

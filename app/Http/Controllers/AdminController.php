@@ -67,6 +67,10 @@ class AdminController extends Controller
         $item = Item::findOrFail($id);
         $item->barcode = 'UAS-INV-' . strtoupper(\Illuminate\Support\Str::random(6));
         $item->save();
-        return redirect('/admin')->with('success', 'Código de barras regenerado para ' . $item->name);
+
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json(['barcode' => $item->barcode, 'name' => $item->name, 'success' => true]);
+        }
+        return back()->with('success', 'Código de barras regenerado para ' . $item->name);
     }
 }

@@ -135,7 +135,7 @@
                                 <div class="font-medium">{{ $res->requester_type === 'group' ? 'Grupo '.$res->group_name : ($res->requester_type === 'teacher' ? $res->teacher_name : $res->user->username) }}</div>
                                 <div class="text-xs text-gray-400">{{ $res->purpose }}</div>
                             </td>
-                            <td class="px-4 py-3"><span class="text-xs px-2 py-1 rounded-full {{ $res->requester_type === 'group' ? 'bg-blue-100 text-blue-700' : ($res->requester_type === 'teacher' ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700') }}">{{ ucfirst($res->requester_type) }}</span></td>
+                            <td class="px-4 py-3"><span class="text-xs px-2 py-1 rounded-full {{ $res->requester_type === 'group' ? 'bg-blue-100 text-blue-700' : ($res->requester_type === 'teacher' ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700') }}">{{ $res->requester_type === 'group' ? 'Grupo' : ($res->requester_type === 'teacher' ? 'Profesor' : 'Alumno') }}</span></td>
                             <td class="px-4 py-3 text-sm text-gray-600">{{ $res->computerRoom->name }}</td>
                             <td class="px-4 py-3 text-xs text-gray-600">
                                 <div>{{ $res->start_date->format('d/m/Y') }}</div>
@@ -288,6 +288,17 @@
         </div>
     </div>
 
+    <div id="toast-notification" class="fixed bottom-5 right-5 bg-white border-l-4 border-amber-500 shadow-2xl rounded-lg p-4 transform translate-y-20 opacity-0 transition-all duration-500 z-50 hidden flex items-center gap-4 max-w-sm">
+        <div class="bg-amber-100 text-amber-500 p-2 rounded-full">
+            <i class="fa-solid fa-bell text-xl"></i>
+        </div>
+        <div class="flex-1">
+            <h4 class="font-bold text-gray-800 text-sm">Notificación</h4>
+            <p id="toast-message" class="text-sm text-gray-600 mt-0.5">...</p>
+        </div>
+        <button onclick="hideToast()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
     <script>
         (function() {
             if (localStorage.getItem('adminRoomsDarkMode') === 'true') {
@@ -314,6 +325,52 @@
             document.getElementById('edit-room-form').action = '{{ url("admin/rooms") }}/' + id;
             document.getElementById('edit-room-modal').classList.remove('hidden');
         }
+
+        // Notificaciones con sonido
+        function playNotificationSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.setValueAtTime(660, ctx.currentTime + 0.12);
+                osc.frequency.setValueAtTime(880, ctx.currentTime + 0.24);
+                gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.5);
+            } catch (e) {}
+        }
+
+        let lastNotifCount = {{ auth()->user()->unreadNotifications->count() ?? 0 }};
+        const toastNotif = document.getElementById('toast-notification');
+        const toastMsg = document.getElementById('toast-message');
+
+        function showToast(msg) {
+            toastMsg.textContent = msg;
+            toastNotif.classList.remove('hidden');
+            setTimeout(() => { toastNotif.classList.remove('translate-y-20', 'opacity-0'); }, 100);
+            setTimeout(hideToast, 8000);
+        }
+        function hideToast() {
+            toastNotif.classList.add('translate-y-20', 'opacity-0');
+            setTimeout(() => { toastNotif.classList.add('hidden'); }, 500);
+        }
+
+        setInterval(() => {
+            fetch('{{ route("notifications.check") }}')
+                .then(r => r.json())
+                .then(d => {
+                    if (d.count > lastNotifCount) {
+                        lastNotifCount = d.count;
+                        if (d.latest) { showToast(d.latest.message); playNotificationSound(); }
+                        setTimeout(() => window.location.reload(), 2500);
+                    }
+                })
+                .catch(() => {});
+        }, 4000);
     </script>
 </body>
 </html>

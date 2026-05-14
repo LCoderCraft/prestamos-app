@@ -122,7 +122,7 @@
                                                 $typeClass = $event->requester_type === 'group' ? 'ev-group' : ($event->requester_type === 'teacher' ? 'ev-teacher' : 'ev-user');
                                                 $label = $event->requester_type === 'group' ? 'Grupo ' . $event->group_name
                                                     : ($event->requester_type === 'teacher' ? $event->teacher_name
-                                                    : $event->user->username);
+                                                    : $event->user->username . ' (Alumno)');
                                                 if ($event->status === 'pending') $typeClass = 'ev-pending';
                                             @endphp
                                             <div class="tg-event {{ $typeClass }}" title="{{ $label }}: {{ $event->purpose }}">
@@ -141,7 +141,7 @@
         <div class="flex gap-4 mt-4 flex-wrap">
             <span class="flex items-center gap-1.5 text-xs text-gray-600"><span class="w-3 h-3 rounded bg-blue-100 border-l-2 border-blue-500 inline-block"></span> Grupo escolar</span>
             <span class="flex items-center gap-1.5 text-xs text-gray-600"><span class="w-3 h-3 rounded bg-green-100 border-l-2 border-green-500 inline-block"></span> Profesor</span>
-            <span class="flex items-center gap-1.5 text-xs text-gray-600"><span class="w-3 h-3 rounded bg-purple-100 border-l-2 border-purple-500 inline-block"></span> Usuario individual</span>
+            <span class="flex items-center gap-1.5 text-xs text-gray-600"><span class="w-3 h-3 rounded bg-purple-100 border-l-2 border-purple-500 inline-block"></span> Alumno</span>
             <span class="flex items-center gap-1.5 text-xs text-gray-600"><span class="w-3 h-3 rounded bg-amber-100 border-l-2 border-dashed border-amber-500 inline-block"></span> Pendiente</span>
         </div>
         <!-- Botón nueva reserva -->
@@ -167,7 +167,7 @@
                         <label class="flex-1 cursor-pointer">
                             <input type="radio" name="requester_type" value="user" class="hidden peer" checked onchange="toggleRequesterFields()">
                             <div class="p-3 border rounded-lg text-center text-sm peer-checked:bg-indigo-50 peer-checked:border-indigo-500 peer-checked:text-indigo-700 border-gray-200 hover:bg-gray-50 transition font-medium">
-                                <i class="fa-solid fa-user block text-lg mb-1"></i> Individual
+                                <i class="fa-solid fa-user block text-lg mb-1"></i> Alumno
                             </div>
                         </label>
                         <label class="flex-1 cursor-pointer">

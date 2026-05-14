@@ -77,4 +77,10 @@ class AdminRoomController extends Controller
         $room->delete();
         return redirect('/admin/rooms')->with('success', 'Centro de cómputo eliminado.');
     }
+
+    public function pendingCount()
+    {
+        $count = RoomReservation::where('status', 'pending')->count();
+        return response()->json(['count' => $count]);
+    }
 }

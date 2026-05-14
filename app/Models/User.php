@@ -30,6 +30,19 @@ public function loans() {
     ];
 
     
+    public function sendPasswordResetNotification($token)
+    {
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        \Illuminate\Support\Facades\DB::table('password_reset_tokens')
+            ->where('email', $this->email)->delete();
+        \Illuminate\Support\Facades\DB::table('password_reset_tokens')->insert([
+            'email' => $this->email,
+            'token' => $code,
+            'created_at' => now(),
+        ]);
+        $this->notify(new \App\Notifications\CustomResetPassword($code));
+    }
+
     protected function casts(): array
     {
         return [

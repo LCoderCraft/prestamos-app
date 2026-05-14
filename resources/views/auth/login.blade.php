@@ -13,7 +13,7 @@
         
         <div class="text-center mb-8">
             <div class="bg-indigo-100 text-indigo-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                <i class="fa-solid fa-projector text-2xl"></i>
+                <i class="fa-solid fa-building-columns text-2xl"></i>
             </div>
             <h2 class="text-2xl font-bold text-gray-800">Préstamos FIM</h2>
             <p class="text-sm text-gray-500 mt-1">Facultad de Ingeniería Mochis</p>
@@ -46,7 +46,7 @@
             <div class="mb-5">
                 <div class="flex justify-between items-center mb-2">
                     <label for="password" class="block text-gray-700 text-sm font-semibold">Contraseña</label>
-                    <a href="#" class="text-xs text-indigo-600 hover:text-indigo-800 transition-colors font-medium">¿Olvidaste tu contraseña?</a>
+                    <a href="{{ route('password.request') }}" class="text-xs text-indigo-600 hover:text-indigo-800 transition-colors font-medium">¿Olvidaste tu contraseña?</a>
                 </div>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

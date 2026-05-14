@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Item;
+use App\Models\RoomReservation;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -17,7 +18,13 @@ class DashboardController extends Controller
         
         $myLoans = Auth::user()->loans()->with('item')->latest()->get();
 
-        return view('dashboard', compact('items', 'myLoans'));
+        $myRooms = RoomReservation::with('computerRoom')
+            ->where('user_id', Auth::id())
+            ->whereIn('status', ['pending', 'active'])
+            ->orderBy('start_date', 'asc')
+            ->get();
+
+        return view('dashboard', compact('items', 'myLoans', 'myRooms'));
     }
     
     public function updateSettings(Request $request)

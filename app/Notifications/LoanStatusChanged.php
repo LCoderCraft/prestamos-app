@@ -22,9 +22,14 @@ class LoanStatusChanged extends Notification
 
     public function toArray(object $notifiable): array
     {
-        $status = $this->loan->status == 'active' ? 'APROBADA' : 'RECHAZADA';
+        $statusText = match($this->loan->status) {
+            'active' => 'APROBADA',
+            'rejected' => 'RECHAZADA',
+            'finished' => 'DEVUELTA - Equipo recibido',
+            default => strtoupper($this->loan->status),
+        };
         return [
-            'message' => "Tu solicitud para {$this->loan->item->name} fue {$status}",
+            'message' => "Tu solicitud para {$this->loan->item->name} fue {$statusText}",
             'status' => $this->loan->status,
             'loan_id' => $this->loan->id
         ];

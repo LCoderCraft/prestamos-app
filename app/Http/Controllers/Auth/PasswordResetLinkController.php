@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -23,13 +24,27 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $user = User::where('email', $request->email)->first();
 
-        return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+        if (!$user) {
+            return back()->withInput($request->only('email'))
+                ->withErrors(['email' => 'No encontramos una cuenta con ese correo.']);
+        }
+
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        \Illuminate\Support\Facades\DB::table('password_reset_tokens')
+            ->where('email', $request->email)->delete();
+
+        \Illuminate\Support\Facades\DB::table('password_reset_tokens')->insert([
+            'email' => $request->email,
+            'token' => $code,
+            'created_at' => now(),
+        ]);
+
+        $user->notify(new \App\Notifications\CustomResetPassword($code));
+
+        return redirect()->route('password.verify.code', ['email' => $request->email])
+            ->with('success', 'Te enviamos un codigo de 6 digitos a tu correo.');
     }
 }
