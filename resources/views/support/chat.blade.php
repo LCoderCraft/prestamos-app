@@ -7,6 +7,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
+        :root { --access-font-size: 100%; }
+        body { font-size: var(--access-font-size); }
+        .dark body, .dark .bg-gradient-to-br, .dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 { background: #1a1a2e !important; }
+        .dark .bg-white { background: #16213e !important; }
+        .dark .bg-gray-50 { background: #1a1a2e !important; }
+        .dark .text-gray-800, .dark .text-gray-700, .dark .text-gray-600, .dark .text-gray-500,
+        .dark .text-gray-400, .dark .text-indigo-600, .dark .text-indigo-700 { color: #e0e0e0 !important; }
+        .dark .border-gray-100, .dark .border-gray-200, .dark .border-gray-300 { border-color: #2a2a4a !important; }
+        .dark .divide-gray-100 > * { border-color: #2a2a4a !important; }
+        .dark .bg-indigo-50 { background: #1a1a3e !important; }
+    </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen font-sans">
     <nav class="bg-indigo-800 shadow-lg border-b-4 border-indigo-500 sticky top-0 z-40">
@@ -21,6 +33,9 @@
                 </div>
             </div>
             <div class="flex items-center space-x-2">
+                <button onclick="toggleChatDarkMode()" class="text-indigo-300 hover:text-white text-sm px-2 py-1 rounded hover:bg-indigo-700 transition" title="Modo oscuro">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
                 <a href="{{ route(Auth::user()->role === 'admin' ? 'admin.dashboard' : 'dashboard') }}"
                    class="text-indigo-200 hover:text-white text-sm flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition">
                     <i class="fa-solid fa-arrow-left"></i> Volver
@@ -86,6 +101,9 @@
                             </span>
                             <span class="text-xs text-gray-400 ml-1">En línea</span>
                             <span class="text-xs text-gray-300 ml-auto">{{ $activeChat->subject }}</span>
+                            <a href="{{ route('support.chat.export', $activeChat->id) }}" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-2 py-1 rounded transition flex items-center gap-1" title="Exportar conversación">
+                                <i class="fa-solid fa-download"></i>
+                            </a>
                         </div>
                         <div class="flex-1 overflow-y-auto p-4 space-y-3" id="messages-container">
                         @forelse($messages as $msg)
@@ -149,6 +167,19 @@
     @endif
 
     <script>
+        // Dark mode
+        (function() {
+            const prefKey = 'chatDarkMode_' + ({{ Auth::user()->role === 'admin' ? 1 : 0 }});
+            if (localStorage.getItem(prefKey) === 'true') {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+        function toggleChatDarkMode() {
+            const prefKey = 'chatDarkMode_' + ({{ Auth::user()->role === 'admin' ? 1 : 0 }});
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem(prefKey, isDark);
+        }
+
         // Enviar mensaje vía AJAX
         const form = document.getElementById('chat-form');
         if (form) {
@@ -168,11 +199,13 @@
                 }).then(r => r.json()).then(data => {
                     input.value = '';
                     const container = document.getElementById('messages-container');
+                    const isAdmin = data.is_admin || false;
                     const div = document.createElement('div');
-                    div.className = 'flex justify-end';
+                    div.className = 'flex ' + (isAdmin ? 'justify-end' : 'justify-start');
                     div.setAttribute('data-msg-id', data.id || Date.now());
-                    div.innerHTML = '<div class="max-w-[70%] bg-indigo-600 text-white rounded-xl px-4 py-2 text-sm"><p>' + data.body + '</p><p class="text-[10px] text-indigo-200 mt-1">Ahora</p></div>';
+                    div.innerHTML = '<div class="max-w-[70%] ' + (isAdmin ? 'bg-indigo-600 text-white' : 'bg-indigo-50 text-gray-800') + ' rounded-xl px-4 py-2 text-sm"><p>' + (data.body || '') + '</p><p class="text-[10px] ' + (isAdmin ? 'text-indigo-200' : 'text-gray-400') + ' mt-1">Ahora</p></div>';
                     container.appendChild(div);
+                    if (data.id) lastMsgId = data.id;
                     container.scrollTop = container.scrollHeight;
                 });
             });

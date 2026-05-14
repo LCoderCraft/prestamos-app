@@ -28,7 +28,7 @@ class AdminController extends Controller
 
     public function storeItem(Request $request) {
         Item::create($request->all());
-        return back()->with('success', 'Producto agregado.');
+        return redirect('/admin')->with('success', 'Producto agregado.');
     }
 
     public function updateItem(Request $request, $id) {
@@ -47,6 +47,26 @@ class AdminController extends Controller
 
         $item->save();
 
-        return back()->with('success', 'Producto actualizado correctamente.');
+        return redirect('/admin')->with('success', 'Producto actualizado correctamente.');
+    }
+
+    public function codigos()
+    {
+        $items = Item::all();
+        foreach ($items as $item) {
+            if (!$item->barcode) {
+                $item->barcode = 'UAS-INV-' . strtoupper(\Illuminate\Support\Str::random(6));
+                $item->save();
+            }
+        }
+        return view('codigos', compact('items'));
+    }
+
+    public function regenerarBarcode($id)
+    {
+        $item = Item::findOrFail($id);
+        $item->barcode = 'UAS-INV-' . strtoupper(\Illuminate\Support\Str::random(6));
+        $item->save();
+        return redirect('/admin')->with('success', 'Código de barras regenerado para ' . $item->name);
     }
 }

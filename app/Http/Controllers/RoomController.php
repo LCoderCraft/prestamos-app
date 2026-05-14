@@ -17,8 +17,10 @@ class RoomController extends Controller
         $endOfWeek = $startOfWeek->copy()->endOfWeek(Carbon::FRIDAY);
         $reservations = RoomReservation::with('user')
             ->where('computer_room_id', $selectedRoomId)
-            ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
-            ->orWhereBetween('end_date', [$startOfWeek, $endOfWeek])
+            ->where(function ($q) use ($startOfWeek, $endOfWeek) {
+                $q->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+                  ->orWhereBetween('end_date', [$startOfWeek, $endOfWeek]);
+            })
             ->get();
         $weekDays = [];
         for ($i = 0; $i < 5; $i++) {

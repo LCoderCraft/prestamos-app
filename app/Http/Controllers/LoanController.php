@@ -105,6 +105,6 @@ public function store(Request $request)
         $n = auth()->user()->unreadNotifications->where('data.loan_id', $loan->id)->first();
         if($n) $n->markAsRead();
 
-        return back()->with('success', 'Proceso completado.');
+        return redirect('/admin')->with('success', 'Proceso completado.');
     }
 }

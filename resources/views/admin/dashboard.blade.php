@@ -6,6 +6,23 @@
     <title>Panel de Administrador - Préstamos FIM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+        :root { --access-font-size: 100%; }
+        body { font-size: var(--access-font-size); }
+        .dark body, .dark .bg-gradient-to-br, .dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 { background: #1a1a2e !important; }
+        .dark .bg-white { background: #16213e !important; }
+        .dark .text-gray-800, .dark .text-gray-700, .dark .text-gray-600, .dark .text-gray-500,
+        .dark .text-gray-400, .dark .text-indigo-600, .dark .text-indigo-700, .dark .text-emerald-700,
+        .dark .text-red-600, .dark .text-red-700, .dark .text-amber-800, .dark .text-indigo-900 { color: #e0e0e0 !important; }
+        .dark .border-gray-100, .dark .border-gray-200, .dark .border-gray-300 { border-color: #2a2a4a !important; }
+        .dark .bg-gray-50 { background: #1a1a2e !important; }
+        .dark .bg-indigo-50 { background: #1a1a3e !important; }
+        .dark .bg-emerald-50 { background: #0a2a1a !important; }
+        .dark .bg-amber-50 { background: #2a2a0a !important; }
+        .dark .bg-red-50 { background: #2a0a0a !important; }
+        .dark .divide-gray-200 > * { border-color: #2a2a4a !important; }
+        .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen font-sans">
 
@@ -23,6 +40,9 @@
             <div class="flex items-center space-x-4 bg-indigo-900 px-4 py-2 rounded-full border border-indigo-700 shadow-inner">
                 <i class="fa-solid fa-user-shield text-indigo-300"></i>
                 <span class="text-sm font-medium text-indigo-100 border-r border-indigo-600 pr-4">Hola, Admin</span>
+                <button onclick="toggleAdminDarkMode()" class="text-indigo-300 hover:text-white transition" title="Modo oscuro">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
                 <form method="POST" action="{{ route('logout') }}" class="m-0">
                     @csrf
                     <button type="submit" class="text-sm text-red-300 hover:text-red-100 font-semibold transition-colors flex items-center gap-2">
@@ -33,28 +53,23 @@
         </div>
     </nav>
 
-    @if(auth()->user()->unreadNotifications->count() > 0)
-    <div class="max-w-7xl mx-auto mt-6 px-4"> 
-        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg shadow-md flex justify-between items-start">
-            <div class="flex gap-3">
-                <i class="fa-solid fa-bell text-amber-500 text-xl mt-1 animate-bounce"></i>
-                <div>
-                    <p class="font-bold text-amber-800">Tienes nuevas solicitudes de equipo:</p>
-                    <ul class="mt-2 space-y-1">
-                        @foreach(auth()->user()->unreadNotifications as $notification)
-                            <li class="text-sm text-amber-700 flex items-center bg-amber-100 px-3 py-1 rounded-md w-fit">
-                                <i class="fa-solid fa-caret-right mr-2 text-amber-500"></i>
-                                {{ $notification->data['message'] }} <strong class="ml-1">({{ $notification->data['item'] ?? '' }})</strong>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-            <a href="{{ route('notifications.read') }}" class="text-xs bg-amber-500 text-white px-3 py-2 rounded shadow hover:bg-amber-600 transition flex items-center gap-1 font-bold">
-                <i class="fa-solid fa-check-double"></i> Marcar leídas
-            </a>
-        </div>
-    </div>
+    @php
+        $unreadNotifs = auth()->user()->unreadNotifications;
+    @endphp
+    @if($unreadNotifs->count() > 0)
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const notifs = @json($unreadNotifs->map(function($n) { return $n->data['message'] ?? 'Nueva solicitud'; }));
+            notifs.forEach(function(msg, i) {
+                setTimeout(function() {
+                    showAdminToast(msg);
+                }, i * 1500);
+            });
+            setTimeout(function() {
+                fetch('{{ route("notifications.read") }}').then(function(r) { r.text(); lastCount = 0; });
+            }, notifs.length * 1500 + 500);
+        });
+    </script>
     @endif
 
     <div class="max-w-7xl mx-auto p-4 mt-2">
@@ -294,7 +309,7 @@
                             @endif
                         </div>
                         
-                        <button onclick="openEditModal({{ $item }})" class="w-full bg-gray-100 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 font-semibold py-2 rounded-lg transition-colors border border-gray-200 text-sm">
+                        <button onclick='openEditModal(@json($item))' class="w-full bg-gray-100 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 font-semibold py-2 rounded-lg transition-colors border border-gray-200 text-sm">
                             <i class="fa-solid fa-pen mr-2"></i>Editar Equipo
                         </button>
                     </div>
@@ -307,37 +322,55 @@
                 <p class="text-sm text-gray-600 mb-8 border-b pb-4">Genera reportes de la actividad y uso de los equipos en la facultad.</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <button class="group bg-white border-2 border-indigo-100 p-6 rounded-xl hover:border-indigo-500 hover:shadow-lg transition-all text-left">
+                    <a href="{{ route('admin.reportes.diario') }}" class="group bg-white border-2 border-indigo-100 p-6 rounded-xl hover:border-indigo-500 hover:shadow-lg transition-all block">
                         <div class="bg-indigo-100 text-indigo-600 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-calendar-day text-xl"></i>
                         </div>
-                        <h3 class="font-bold text-gray-800 text-lg mb-1">Corte Diario</h3>
+                        <h3 class="font-bold text-gray-800 text-lg mb-1">Corte Diario <i class="fa-solid fa-download text-indigo-400 text-sm ml-1"></i></h3>
                         <p class="text-xs text-gray-500">Préstamos completados y pendientes de hoy.</p>
-                    </button>
-                    <button class="group bg-white border-2 border-indigo-100 p-6 rounded-xl hover:border-indigo-500 hover:shadow-lg transition-all text-left">
+                    </a>
+                    <a href="{{ route('admin.reportes.semanal') }}" class="group bg-white border-2 border-indigo-100 p-6 rounded-xl hover:border-indigo-500 hover:shadow-lg transition-all block">
                         <div class="bg-indigo-100 text-indigo-600 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-calendar-week text-xl"></i>
                         </div>
-                        <h3 class="font-bold text-gray-800 text-lg mb-1">Resumen Semanal</h3>
+                        <h3 class="font-bold text-gray-800 text-lg mb-1">Resumen Semanal <i class="fa-solid fa-download text-indigo-400 text-sm ml-1"></i></h3>
                         <p class="text-xs text-gray-500">Estadísticas de uso de los últimos 7 días.</p>
-                    </button>
-                    <button class="group bg-white border-2 border-indigo-100 p-6 rounded-xl hover:border-indigo-500 hover:shadow-lg transition-all text-left">
+                    </a>
+                    <a href="{{ route('admin.reportes.mensual') }}" class="group bg-white border-2 border-indigo-100 p-6 rounded-xl hover:border-indigo-500 hover:shadow-lg transition-all block">
                         <div class="bg-indigo-100 text-indigo-600 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-chart-line text-xl"></i>
                         </div>
-                        <h3 class="font-bold text-gray-800 text-lg mb-1">Métricas Mensuales</h3>
+                        <h3 class="font-bold text-gray-800 text-lg mb-1">Métricas Mensuales <i class="fa-solid fa-download text-indigo-400 text-sm ml-1"></i></h3>
                         <p class="text-xs text-gray-500">Equipos más usados y usuarios frecuentes.</p>
-                    </button>
+                    </a>
                 </div>
                 
-                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 flex flex-col md:flex-row justify-between items-center">
-                    <div>
-                        <h4 class="font-bold text-gray-800">Exportar Datos</h4>
-                        <p class="text-sm text-gray-500">Descarga la base de datos completa de movimientos en formato PDF.</p>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    @php
+                        $todayLoans = $activeLoans->merge($historyLoans)->filter(function($l) {
+                            return $l->created_at->isToday();
+                        });
+                        $todayReservations = App\Models\RoomReservation::whereDate('created_at', today())->count();
+                        $topItem = $historyLoans->groupBy('item_id')->sortByDesc(function($g) { return $g->count(); })->first();
+                        $topItemName = $topItem && $topItem->first()?->item?->name ? $topItem->first()->item->name : 'N/A';
+                        $todayPending = $activeLoans->where('status', 'pending')->filter(function($l) { return $l->created_at->isToday(); })->count();
+                    @endphp
+                    <div class="bg-white border border-gray-200 p-4 rounded-xl text-center shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Préstamos Hoy</p>
+                        <p class="text-3xl font-bold text-indigo-600 mt-1">{{ $todayLoans->count() }}</p>
                     </div>
-                    <button class="mt-4 md:mt-0 bg-red-600 text-white px-6 py-3 rounded-lg shadow hover:bg-red-700 font-bold text-sm flex items-center transition">
-                        <i class="fa-solid fa-file-pdf text-lg mr-2"></i> Generar Documento PDF
-                    </button>
+                    <div class="bg-white border border-gray-200 p-4 rounded-xl text-center shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Reservaciones Hoy</p>
+                        <p class="text-3xl font-bold text-emerald-600 mt-1">{{ $todayReservations }}</p>
+                    </div>
+                    <div class="bg-white border border-gray-200 p-4 rounded-xl text-center shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Pendientes Hoy</p>
+                        <p class="text-3xl font-bold text-amber-600 mt-1">{{ $todayPending }}</p>
+                    </div>
+                    <div class="bg-white border border-gray-200 p-4 rounded-xl text-center shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Equipo Más Usado</p>
+                        <p class="text-sm font-bold text-gray-800 mt-1 truncate">{{ $topItemName }}</p>
+                    </div>
                 </div>
             </div>
 
@@ -348,31 +381,67 @@
                     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm w-full md:w-1/2">
                         <div class="mb-5">
                             <label class="block text-sm font-bold text-gray-700 mb-2">Seleccionar Equipo del Inventario</label>
-                            <select class="w-full border-gray-300 border p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-gray-50">
-                                <option>Selecciona un equipo...</option>
-                                <option>Proyector Epson Modelo X</option>
-                                <option>Cable HDMI 2 Metros</option>
+                            <select id="admin-barcode-select" class="w-full border-gray-300 border p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-gray-50" onchange="updateAdminPreview()">
+                                <option value="">-- Selecciona un equipo --</option>
+                                @foreach($items as $item)
+                                    <option value="{{ $item->id }}" data-barcode="{{ $item->barcode ?? '' }}" data-name="{{ $item->name }}">
+                                        {{ $item->name }} {{ $item->barcode ? '('.$item->barcode.')' : '(Sin código)' }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="mb-5">
                             <label class="block text-sm font-bold text-gray-700 mb-2">Código Asignado</label>
                             <div class="relative">
                                 <i class="fa-solid fa-hashtag absolute left-3 top-3.5 text-gray-400"></i>
-                                <input type="text" value="UAS-PRJ-2026-001" class="w-full pl-9 border border-gray-300 p-3 rounded-lg bg-gray-100 text-gray-600 font-mono font-bold" readonly>
+                                <input type="text" id="admin-barcode-display" value="" class="w-full pl-9 border border-gray-300 p-3 rounded-lg bg-gray-100 text-gray-600 font-mono font-bold" readonly>
                             </div>
                         </div>
-                        <button class="bg-gray-800 text-white p-3 rounded-lg w-full hover:bg-gray-900 font-bold flex justify-center items-center gap-2 transition shadow-md">
-                            <i class="fa-solid fa-print"></i> Enviar a Impresora Térmica
-                        </button>
+                        <div class="flex gap-3">
+                            <button id="admin-btn-print" onclick="adminPrintBarcode()" class="bg-gray-800 text-white p-3 rounded-lg w-full hover:bg-gray-900 font-bold flex justify-center items-center gap-2 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fa-solid fa-print"></i> Imprimir Etiqueta
+                            </button>
+                            <button id="admin-btn-generate" onclick="adminGenerateBarcode()" class="bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 font-bold flex justify-center items-center gap-2 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fa-solid fa-arrows-rotate"></i> Generar
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="w-full md:w-1/2 flex flex-col justify-center items-center bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-8">
                         <p class="text-sm font-bold text-gray-500 mb-4 uppercase tracking-widest">Vista Previa de Etiqueta</p>
-                        <div class="bg-white p-6 rounded shadow-sm border border-gray-200 flex flex-col items-center">
-                            <h4 class="text-xs font-bold text-center mb-2">FACULTAD DE INGENIERÍA MOCHIS</h4>
-                            <img src="https://barcode.tec-it.com/barcode.ashx?data=UAS-PRJ-2026-001&code=Code128" alt="Código de Barras" class="h-16 mix-blend-multiply">
-                            <p class="text-[10px] mt-1 text-center font-mono">UAS-PRJ-2026-001</p>
+                        <div id="admin-preview-empty" class="text-gray-400 text-sm italic text-center">
+                            <i class="fa-solid fa-barcode text-5xl block mb-2 text-gray-300"></i>
+                            Selecciona un equipo
                         </div>
+                        <div id="admin-preview-content" class="hidden bg-white p-6 rounded shadow-sm border border-gray-200 flex flex-col items-center">
+                            <h4 class="text-xs font-bold text-center mb-2">FACULTAD DE INGENIERÍA MOCHIS</h4>
+                            <img id="admin-barcode-img" src="" alt="Código de Barras" class="h-16 mix-blend-multiply">
+                            <p id="admin-barcode-label" class="text-[10px] mt-1 text-center font-mono"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Inventario Completo</h3>
+                    <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Equipo</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Código</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                @foreach($items as $item)
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-800">{{ $item->name }}</td>
+                                    <td class="px-4 py-3 font-mono text-indigo-600 font-bold">{{ $item->barcode ?? '—' }}</td>
+                                    <td class="px-4 py-3 text-gray-600">{{ $item->total_count }} unid.</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -619,19 +688,26 @@
         let lastChatCount = 0;
         const toast = document.getElementById('toast-notification');
         const msgElement = document.getElementById('toast-message');
-        function showToast(message, isChat = false) {
+        function showAdminToast(message, isChat = false) {
+            if (!toast) return;
             toast.className = 'fixed bottom-5 right-5 shadow-2xl rounded-lg p-4 transform translate-y-20 opacity-0 transition-all duration-500 z-50 flex items-center gap-4 max-w-sm';
             if (isChat) {
                 toast.classList.add('bg-purple-50', 'border-l-4', 'border-purple-500');
             } else {
                 toast.classList.add('bg-white', 'border-l-4', 'border-amber-500');
             }
+            if (!isChat && localStorage.getItem('visualIndicators') !== 'false') {
+                document.body.style.transition = 'background 0.3s';
+                document.body.style.background = 'rgba(99,102,241,0.15)';
+                setTimeout(function() { document.body.style.background = ''; }, 500);
+            }
             msgElement.textContent = message;
             toast.classList.remove('hidden');
             setTimeout(() => { toast.classList.remove('translate-y-20', 'opacity-0'); }, 100);
-            setTimeout(hideToast, 6000);
+            setTimeout(hideAdminToast, 10000);
         }
-        function hideToast() {
+        function hideAdminToast() {
+            if (!toast) return;
             toast.classList.add('translate-y-20', 'opacity-0');
             setTimeout(() => { toast.classList.add('hidden'); }, 500);
         }
@@ -644,7 +720,7 @@
                     if (data.count > lastCount) {
                         lastCount = data.count;
                         if (data.latest) {
-                            showToast(data.latest.message, false);
+                            showAdminToast(data.latest.message, false);
                             playNotificationSound();
                         }
                         setTimeout(() => window.location.reload(), 2500);
@@ -660,7 +736,7 @@
                         if (badge) { badge.classList.remove('hidden'); badge.textContent = data.count; }
                         if (data.count > lastChatCount) {
                             lastChatCount = data.count;
-                            showToast('💬 Nuevo mensaje de chat de ayuda', true);
+                            showAdminToast('Nuevo mensaje de chat de ayuda', true);
                             playNotificationSound();
                         }
                     } else {
@@ -671,6 +747,84 @@
         }, 4000);
         // Inicializar lastChatCount
         fetch('{{ route("support.chat.unread") }}').then(r => r.json()).then(d => { lastChatCount = d.count; }).catch(() => {});
+
+        // --- DARK MODE ADMIN ---
+        (function() {
+            if (localStorage.getItem('adminDarkMode') === 'true') {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+        function toggleAdminDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('adminDarkMode', isDark);
+        }
+
+        // --- CÓDIGOS DE BARRAS (Admin) ---
+        let adminSelectedBarcode = '';
+
+        function updateAdminPreview() {
+            const select = document.getElementById('admin-barcode-select');
+            const option = select.options[select.selectedIndex];
+            const barcode = option.dataset.barcode;
+
+            const previewEmpty = document.getElementById('admin-preview-empty');
+            const previewContent = document.getElementById('admin-preview-content');
+            const barcodeImg = document.getElementById('admin-barcode-img');
+            const barcodeDisplay = document.getElementById('admin-barcode-display');
+            const barcodeLabel = document.getElementById('admin-barcode-label');
+            const btnPrint = document.getElementById('admin-btn-print');
+            const btnGenerate = document.getElementById('admin-btn-generate');
+
+            adminSelectedBarcode = barcode;
+
+            if (!option.value || !barcode) {
+                previewEmpty.classList.remove('hidden');
+                previewContent.classList.add('hidden');
+                barcodeDisplay.value = barcode || '';
+                btnPrint.disabled = true;
+                btnGenerate.disabled = !option.value;
+                return;
+            }
+
+            previewEmpty.classList.add('hidden');
+            previewContent.classList.remove('hidden');
+            barcodeImg.src = 'https://barcode.tec-it.com/barcode.ashx?data=' + barcode + '&code=Code128';
+            barcodeDisplay.value = barcode;
+            barcodeLabel.textContent = barcode;
+            btnPrint.disabled = false;
+            btnGenerate.disabled = false;
+        }
+
+        function adminPrintBarcode() {
+            if (!adminSelectedBarcode) return;
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Etiqueta</title>
+                <style>
+                    body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif; }
+                    .label { text-align: center; padding: 20px; border: 1px solid #ccc; }
+                    h3 { font-size: 12px; margin: 0 0 8px; text-transform: uppercase; }
+                    img { height: 60px; }
+                    p { font-size: 11px; font-family: monospace; margin-top: 4px; }
+                </style></head>
+                <body>
+                    <div class="label">
+                        <h3>Facultad de Ingeniería Mochis</h3>
+                        <img src="https://barcode.tec-it.com/barcode.ashx?data=${adminSelectedBarcode}&code=Code128" alt="Código">
+                        <p>${adminSelectedBarcode}</p>
+                    </div>
+                    <script>window.print();window.close();<\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function adminGenerateBarcode() {
+            const select = document.getElementById('admin-barcode-select');
+            const id = select.value;
+            if (!id) return;
+            window.location.href = '{{ url("admin/codigos") }}/' + id + '/regenerar';
+        }
     </script>
 </body>
 </html>

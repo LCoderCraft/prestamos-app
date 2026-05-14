@@ -31,7 +31,7 @@ class AdminRoomController extends Controller
             'location' => 'nullable|string',
             'photo_url' => 'nullable|url',
         ]));
-        return back()->with('success', 'Centro de cómputo agregado.');
+        return redirect('/admin/rooms')->with('success', 'Centro de cómputo agregado.');
     }
     public function updateStatus(Request $request, $id)
     {
@@ -57,7 +57,7 @@ class AdminRoomController extends Controller
             }
         }
 
-        return back()->with('success', 'Reservación actualizada.');
+        return redirect('/admin/rooms')->with('success', 'Reservación actualizada.');
     }
 
     public function updateRoom(Request $request, $id)
@@ -68,13 +68,13 @@ class AdminRoomController extends Controller
         $room->location = $request->location;
         $room->is_active = $request->has('is_active');
         $room->save();
-        return back()->with('success', 'Centro de cómputo actualizado.');
+        return redirect('/admin/rooms')->with('success', 'Centro de cómputo actualizado.');
     }
 
     public function destroyRoom($id)
     {
         $room = ComputerRoom::findOrFail($id);
         $room->delete();
-        return back()->with('success', 'Centro de cómputo eliminado.');
+        return redirect('/admin/rooms')->with('success', 'Centro de cómputo eliminado.');
     }
 }

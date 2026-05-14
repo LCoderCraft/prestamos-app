@@ -6,6 +6,21 @@
     <title>Admin - Centros de Cómputo - FIM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --access-font-size: 100%; }
+        body { font-size: var(--access-font-size); }
+        .dark body, .dark .bg-gradient-to-br, .dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 { background: #1a1a2e !important; }
+        .dark .bg-white { background: #16213e !important; }
+        .dark .bg-gray-50 { background: #1a1a2e !important; }
+        .dark .text-gray-800, .dark .text-gray-700, .dark .text-gray-600, .dark .text-gray-500,
+        .dark .text-gray-400, .dark .text-indigo-600, .dark .text-indigo-700 { color: #e0e0e0 !important; }
+        .dark .border-gray-100, .dark .border-gray-200, .dark .border-gray-300 { border-color: #2a2a4a !important; }
+        .dark .divide-gray-100 > * { border-color: #2a2a4a !important; }
+        .dark .bg-indigo-50 { background: #1a1a3e !important; }
+        .dark .bg-emerald-50 { background: #0a2a1a !important; }
+        .dark .bg-amber-50 { background: #2a2a0a !important; }
+        .dark .bg-red-50 { background: #2a0a0a !important; }
+    </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen font-sans">
     <nav class="bg-indigo-800 shadow-lg border-b-4 border-indigo-500">
@@ -20,6 +35,9 @@
                 </div>
             </div>
             <div class="flex items-center space-x-3">
+                <button onclick="toggleRoomsAdminDarkMode()" class="text-indigo-300 hover:text-white text-sm px-2 py-1 rounded hover:bg-indigo-700 transition" title="Modo oscuro">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
                 <a href="{{ route('admin.dashboard') }}" class="text-indigo-200 hover:text-white text-sm"><i class="fa-solid fa-arrow-left"></i> Volver</a>
                 <form method="POST" action="{{ route('logout') }}">@csrf
                     <button type="submit" class="text-sm text-red-300 hover:text-red-100 font-semibold">Salir <i class="fa-solid fa-right-from-bracket"></i></button>
@@ -271,6 +289,16 @@
     </div>
 
     <script>
+        (function() {
+            if (localStorage.getItem('adminRoomsDarkMode') === 'true') {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+        function toggleRoomsAdminDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('adminRoomsDarkMode', isDark);
+        }
+
         function openActionModal(id, user, room) {
             document.getElementById('action-user').textContent = user;
             document.getElementById('action-room').textContent = room;

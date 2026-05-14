@@ -14,6 +14,13 @@
         .ev-teacher { background: #d1fae5; color: #065f46; border-left: 3px solid #10b981; }
         .ev-user { background: #ede9fe; color: #4c1d95; border-left: 3px solid #8b5cf6; }
         .ev-pending { background: #fef3c7; color: #92400e; border-left: 3px dashed #f59e0b; }
+        :root { --access-font-size: 100%; }
+        body { font-size: var(--access-font-size); }
+        .dark body, .dark .bg-gradient-to-br, .dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 { background: #1a1a2e !important; }
+        .dark .bg-white { background: #16213e !important; }
+        .dark .text-gray-800, .dark .text-gray-700, .dark .text-gray-600, .dark .text-gray-500,
+        .dark .text-gray-400, .dark .text-indigo-600 { color: #e0e0e0 !important; }
+        .dark .border-gray-100, .dark .border-gray-200 { border-color: #2a2a4a !important; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen font-sans">
@@ -32,6 +39,9 @@
                 <a href="{{ route('dashboard') }}" class="text-indigo-200 hover:text-white text-sm flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition">
                     <i class="fa-solid fa-arrow-left"></i> Volver
                 </a>
+                <button onclick="toggleRoomsDarkMode()" class="text-indigo-300 hover:text-white text-sm px-2 py-1 rounded hover:bg-indigo-700 transition" title="Modo oscuro">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -236,6 +246,15 @@
             const type = document.querySelector('input[name="requester_type"]:checked').value;
             document.getElementById('field-group').classList.toggle('hidden', type !== 'group');
             document.getElementById('field-teacher').classList.toggle('hidden', type !== 'teacher');
+        }
+        (function() {
+            if (localStorage.getItem('roomsDarkMode') === 'true') {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+        function toggleRoomsDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('roomsDarkMode', isDark);
         }
     </script>
 </body>

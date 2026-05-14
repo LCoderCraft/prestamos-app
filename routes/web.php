@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     if (Auth::check()) {
-        Auth::logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
+        return redirect('/dashboard');
     }
     return redirect()->route('login');
 });
@@ -34,9 +32,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/items', [AdminController::class, 'storeItem'])->name('admin.items.store');
         Route::put('/admin/items/{id}', [App\Http\Controllers\AdminController::class, 'updateItem'])->name('admin.items.update');
         
-        // Vistas de demostración para el sistema de préstamos
-        Route::view('/admin/reportes', 'reportes')->name('admin.reportes.index');
-        Route::view('/admin/codigos', 'codigos')->name('admin.codigos.index');
+        // Reportes y códigos de barras
+        Route::get('/admin/reportes', [App\Http\Controllers\ReportController::class, 'index'])->name('admin.reportes.index');
+        Route::get('/admin/reportes/diario', [App\Http\Controllers\ReportController::class, 'diario'])->name('admin.reportes.diario');
+        Route::get('/admin/reportes/semanal', [App\Http\Controllers\ReportController::class, 'semanal'])->name('admin.reportes.semanal');
+        Route::get('/admin/reportes/mensual', [App\Http\Controllers\ReportController::class, 'mensual'])->name('admin.reportes.mensual');
+        Route::get('/admin/codigos', [App\Http\Controllers\AdminController::class, 'codigos'])->name('admin.codigos.index');
+        Route::get('/admin/codigos/{id}/regenerar', [App\Http\Controllers\AdminController::class, 'regenerarBarcode'])->name('admin.codigos.regenerar');
     });
 
     Route::get('/notifications/mark-as-read', function () {
@@ -88,6 +90,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/support/chat/{id}/message', [App\Http\Controllers\SupportChatController::class, 'sendMessage'])->name('support.chat.message');
     Route::get('/support/chat/{id}/messages', [App\Http\Controllers\SupportChatController::class, 'messages'])->name('support.chat.messages');
     Route::get('/support/chat/unread/count', [App\Http\Controllers\SupportChatController::class, 'unreadCount'])->name('support.chat.unread');
+    Route::get('/support/chat/{id}/export', [App\Http\Controllers\SupportChatController::class, 'export'])->name('support.chat.export');
 });
 
 require __DIR__.'/auth.php';
