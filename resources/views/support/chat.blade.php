@@ -10,14 +10,27 @@
     <style>
         :root { --access-font-size: 100%; }
         body { font-size: var(--access-font-size); }
-        .dark body, .dark .bg-gradient-to-br, .dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 { background: #1a1a2e !important; }
-        .dark .bg-white { background: #16213e !important; }
-        .dark .bg-gray-50 { background: #1a1a2e !important; }
+        .dark body, .dark .bg-gradient-to-br, .dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 { background: #0a1628 !important; }
+        .dark .bg-white { background: #0f1d35 !important; }
+        .dark .bg-gray-50 { background: #0d1f3c !important; }
         .dark .text-gray-800, .dark .text-gray-700, .dark .text-gray-600, .dark .text-gray-500,
-        .dark .text-gray-400, .dark .text-indigo-600, .dark .text-indigo-700 { color: #e0e0e0 !important; }
-        .dark .border-gray-100, .dark .border-gray-200, .dark .border-gray-300 { border-color: #2a2a4a !important; }
-        .dark .divide-gray-100 > * { border-color: #2a2a4a !important; }
-        .dark .bg-indigo-50 { background: #1a1a3e !important; }
+        .dark .text-gray-400, .dark .text-gray-300, .dark .text-indigo-600, .dark .text-indigo-700 { color: #c8d6e5 !important; }
+        .dark .border-gray-100, .dark .border-gray-200, .dark .border-gray-300 { border-color: #1a3356 !important; }
+        .dark .divide-gray-100 > * { border-color: #1a3356 !important; }
+        .dark .bg-indigo-50 { background: #0f2847 !important; }
+        .dark .bg-indigo-800 { background: #0a1e3d !important; }
+        .dark .hover\:bg-gray-50:hover { background-color: #0d1f3c !important; }
+        .dark .shadow-sm, .dark .shadow-md, .dark .shadow-lg, .dark .shadow-xl { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.4) !important; }
+        .dark .text-indigo-200, .dark .text-indigo-300 { color: #5a8ec9 !important; }
+        .dark .text-indigo-100 { color: #8ab4f0 !important; }
+        .dark .text-indigo-800 { color: #8ab4f0 !important; }
+        .dark .text-indigo-400 { color: #6a9ed9 !important; }
+        .dark .text-emerald-500, .dark .text-emerald-600 { color: #5cd68a !important; }
+        .dark .text-red-500, .dark .text-red-600 { color: #f87171 !important; }
+        .dark .text-amber-500 { color: #e8c84a !important; }
+        .dark .text-gray-500 { color: #8ba4be !important; }
+        .dark select, .dark input[type="text"], .dark textarea { background-color: #0d1f3c !important; border-color: #1a3356 !important; color: #c8d6e5 !important; }
+        .dark option { background-color: #0f1d35 !important; color: #c8d6e5 !important; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen font-sans">

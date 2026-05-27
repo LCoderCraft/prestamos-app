@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/reportes/mensual', [App\Http\Controllers\ReportController::class, 'mensual'])->name('admin.reportes.mensual');
         Route::get('/admin/codigos', [App\Http\Controllers\AdminController::class, 'codigos'])->name('admin.codigos.index');
         Route::get('/admin/codigos/{id}/regenerar', [App\Http\Controllers\AdminController::class, 'regenerarBarcode'])->name('admin.codigos.regenerar');
+        Route::get('/admin/reportes/producto-stats', [App\Http\Controllers\ReportController::class, 'productoStats'])->name('admin.reportes.producto_stats');
     });
 
     Route::get('/notifications/mark-as-read', function () {

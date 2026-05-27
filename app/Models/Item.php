@@ -4,20 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str; // <-- 1. Importación necesaria para generar texto aleatorio
+use Illuminate\Support\Str;
 
 class Item extends Model
 {
     use HasFactory;
 
-    // <-- 2. Agregamos 'barcode' al arreglo para que Laravel permita guardarlo
+    // pongo barcode aqui para que laravel me deje guardarlo en la base de datos
     protected $fillable = ['name', 'total_count', 'photo_url', 'is_active', 'barcode']; 
 
-    // <-- 3. El "Cerebro" automático: se ejecuta justo antes de guardar en la base de datos
+    // esto se ejecuta solo cuando voy a crear un equipo nuevo
+    // asi me aseguro que siempre tenga un codigo de barras desde el principio
     protected static function booted()
     {
         static::creating(function ($item) {
-            // Genera el código automáticamente con el prefijo de la universidad
             $item->barcode = 'UAS-INV-' . strtoupper(Str::random(6));
         });
     }
@@ -26,6 +26,9 @@ class Item extends Model
         return $this->hasMany(Loan::class);
     }
     
+    // funcion para saber si hay equipos disponibles en un horario
+    // cuenta cuantos prestamos estan activos o pendientes en ese rango
+    // si el numero es menor al total de equipos, entonces si hay disponible
     public function isAvailable($start, $end) {
         $occupiedCount = $this->loans()
             ->whereIn('status', ['active', 'pending'])

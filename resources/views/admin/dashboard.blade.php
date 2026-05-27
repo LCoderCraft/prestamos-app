@@ -9,18 +9,50 @@
 <style>
         :root { --access-font-size: 100%; }
         body { font-size: var(--access-font-size); }
-        .dark body, .dark .bg-gradient-to-br, .dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 { background: #1a1a2e !important; }
-        .dark .bg-white { background: #16213e !important; }
+        .dark body, .dark .bg-gradient-to-br, .dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 { background: #0a1628 !important; }
+        .dark .bg-white { background: #0f1d35 !important; }
         .dark .text-gray-800, .dark .text-gray-700, .dark .text-gray-600, .dark .text-gray-500,
-        .dark .text-gray-400, .dark .text-indigo-600, .dark .text-indigo-700, .dark .text-emerald-700,
-        .dark .text-red-600, .dark .text-red-700, .dark .text-amber-800, .dark .text-indigo-900 { color: #e0e0e0 !important; }
-        .dark .border-gray-100, .dark .border-gray-200, .dark .border-gray-300 { border-color: #2a2a4a !important; }
-        .dark .bg-gray-50 { background: #1a1a2e !important; }
-        .dark .bg-indigo-50 { background: #1a1a3e !important; }
+        .dark .text-gray-400, .dark .text-gray-300, .dark .text-indigo-600, .dark .text-indigo-700,
+        .dark .text-emerald-700, .dark .text-red-600, .dark .text-red-700, .dark .text-amber-800,
+        .dark .text-indigo-900 { color: #c8d6e5 !important; }
+        .dark .border-gray-100, .dark .border-gray-200, .dark .border-gray-300 { border-color: #1a3356 !important; }
+        .dark .bg-gray-50 { background: #0d1f3c !important; }
+        .dark .bg-indigo-50 { background: #0f2847 !important; }
         .dark .bg-emerald-50 { background: #0a2a1a !important; }
         .dark .bg-amber-50 { background: #2a2a0a !important; }
         .dark .bg-red-50 { background: #2a0a0a !important; }
-        .dark .divide-gray-200 > * { border-color: #2a2a4a !important; }
+        .dark .divide-gray-200 > * { border-color: #1a3356 !important; }
+        .dark .bg-indigo-800 { background: #0a1e3d !important; }
+        .dark .bg-indigo-900 { background: #07132a !important; }
+        .dark .text-indigo-300 { color: #5a8ec9 !important; }
+        .dark .text-indigo-100 { color: #8ab4f0 !important; }
+        .dark .text-indigo-200 { color: #6a9ed9 !important; }
+        .dark .text-indigo-700 { color: #8ab4f0 !important; }
+        .dark .hover\:bg-gray-50:hover { background-color: #0d1f3c !important; }
+        .dark .shadow-sm, .dark .shadow-md, .dark .shadow-lg, .dark .shadow-xl { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.4) !important; }
+        .dark .bg-indigo-50\/50 { background: rgba(15, 40, 71, 0.5) !important; }
+        .dark .text-indigo-800 { color: #8ab4f0 !important; }
+        .dark .hover\:text-indigo-600:hover { color: #6a9ed9 !important; }
+        .dark th { color: #5a8ec9 !important; }
+        .dark .text-gray-500 { color: #8ba4be !important; }
+        .dark .text-emerald-500, .dark .text-emerald-600 { color: #5cd68a !important; }
+        .dark .text-amber-500, .dark .text-amber-600 { color: #e8c84a !important; }
+        .dark .text-red-500 { color: #f87171 !important; }
+        .dark .text-blue-600 { color: #60a5fa !important; }
+        .dark .text-indigo-400 { color: #6a9ed9 !important; }
+        .dark .bg-emerald-100 { background: #0d3320 !important; }
+        .dark .bg-amber-100 { background: #332d0d !important; }
+        .dark .bg-red-100 { background: #330d0d !important; }
+        .dark .bg-blue-100 { background: #0d1f3d !important; }
+        .dark .text-emerald-800 { color: #5cd68a !important; }
+        .dark .text-amber-800 { color: #e8c84a !important; }
+        .dark .text-red-800 { color: #f87171 !important; }
+        .dark .text-red-300 { color: #fca5a5 !important; }
+        .dark .text-indigo-500 { color: #7aa9e0 !important; }
+        .dark .bg-indigo-100 { background: #0f2847 !important; }
+        .dark select, .dark input[type="text"], .dark input[type="date"], .dark input[type="number"], .dark input[type="url"], .dark input[type="email"], .dark input[type="password"], .dark input[type="time"], .dark textarea { background-color: #0d1f3c !important; border-color: #1a3356 !important; color: #c8d6e5 !important; }
+        .dark option { background-color: #0f1d35 !important; color: #c8d6e5 !important; }
+        .dark .bg-gray-100 { background: #0d1f3c !important; }
         .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
     </style>
 </head>
@@ -91,17 +123,29 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="bg-white p-5 rounded-xl shadow-md border border-gray-100 flex items-center gap-4 hover:shadow-lg transition-shadow">
                 <div class="bg-blue-100 text-blue-600 p-3 rounded-lg"><i class="fa-solid fa-box-open text-xl"></i></div>
-                <div><p class="text-sm text-gray-500 font-semibold">Préstamos Activos</p><p class="text-2xl font-bold text-gray-800">{{ $activeLoans->where('status', 'active')->count() ?? '0' }}</p></div>
+                <div>
+                    <p class="text-sm font-extrabold text-gray-700 uppercase tracking-wide">Préstamos Activos</p>
+                    <p class="text-3xl font-black text-gray-800 mt-1">{{ $activeLoans->where('status', 'active')->count() ?? '0' }}</p>
+                </div>
             </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="bg-white p-5 rounded-xl shadow-md border border-gray-100 flex items-center gap-4 hover:shadow-lg transition-shadow">
                 <div class="bg-amber-100 text-amber-600 p-3 rounded-lg"><i class="fa-solid fa-clock-rotate-left text-xl"></i></div>
-                <div><p class="text-sm text-gray-500 font-semibold">Solicitudes Pendientes</p><p class="text-2xl font-bold text-gray-800">{{ $activeLoans->where('status', 'pending')->count() ?? '0' }}</p></div>
+                <div>
+                    <p class="text-sm font-extrabold text-gray-700 uppercase tracking-wide">Solicitudes Pendientes</p>
+                    <p class="text-3xl font-black text-gray-800 mt-1">{{ $activeLoans->where('status', 'pending')->count() ?? '0' }}</p>
+                </div>
             </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="bg-white p-5 rounded-xl shadow-md border border-gray-100 flex items-center gap-4 hover:shadow-lg transition-shadow">
                 <div class="bg-indigo-100 text-indigo-600 p-3 rounded-lg"><i class="fa-solid fa-boxes-stacked text-xl"></i></div>
-                <div><p class="text-sm text-gray-500 font-semibold">Equipos en Inventario</p><p class="text-2xl font-bold text-gray-800"><button onclick="switchTab('inventory')" class="hover:text-indigo-600 transition">Gestionar ➔</button></p></div>
+                <div>
+                    <p class="text-sm font-extrabold text-gray-700 uppercase tracking-wide">Equipos en Inventario</p>
+                    <p class="text-3xl font-black text-gray-800 mt-1">{{ $items->count() }}</p>
+                    <button onclick="switchTab('inventory')" class="mt-1 inline-flex items-center gap-1 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg transition-all shadow-sm border border-indigo-200">
+                        <i class="fa-solid fa-arrow-right"></i> Ir a Inventario
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -213,30 +257,31 @@
 
             <div id="content-history" class="hidden animate-fadeIn">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6"><i class="fa-solid fa-clock-rotate-left text-indigo-600 mr-2"></i>Historial Completo</h2>
-                <div class="overflow-x-auto rounded-lg border border-gray-200">
-                    <table class="w-full min-w-full divide-y divide-gray-200">
+                <div class="w-full rounded-lg border border-gray-200 shadow-sm">
+                    <div class="overflow-x-auto">
+                    <table class="w-full divide-y divide-gray-200 table-fixed">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Fecha Cierre</th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Equipo</th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Usuario</th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Resolución</th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Observaciones</th>
+                                <th class="w-[18%] px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase">Fecha Cierre</th>
+                                <th class="w-[22%] px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase">Equipo</th>
+                                <th class="w-[15%] px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase">Usuario</th>
+                                <th class="w-[18%] px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase">Resultado</th>
+                                <th class="w-[27%] px-4 py-4 text-left text-xs font-bold text-gray-500 uppercase">Observaciones</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($historyLoans as $loan)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 text-sm text-gray-600"><i class="fa-regular fa-calendar-check mr-1"></i>{{ $loan->updated_at->format('d/m/Y H:i') }}</td>
-                                <td class="px-6 py-4 text-sm font-bold text-gray-800">{{ $loan->item->name }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-600">{{ $loan->user->username }}</td>
-                                <td class="px-6 py-4">
+                                <td class="px-4 py-4 text-sm text-gray-600"><i class="fa-regular fa-calendar-check mr-1"></i>{{ $loan->updated_at->format('d/m/Y H:i') }}</td>
+                                <td class="px-4 py-4 text-sm font-bold text-gray-800">{{ $loan->item->name }}</td>
+                                <td class="px-4 py-4 text-sm text-gray-600">{{ $loan->user->username }}</td>
+                                <td class="px-4 py-4">
                                     <span class="px-2 py-1 text-xs font-bold rounded-md {{ $loan->status=='finished'?'bg-gray-100 text-gray-700 border border-gray-300':'bg-red-50 text-red-700 border border-red-200' }}">
                                         @if($loan->status == 'finished') <i class="fa-solid fa-check"></i> Finalizado
                                         @else <i class="fa-solid fa-ban"></i> Rechazado @endif
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-500 italic">
+                                <td class="px-4 py-4 text-sm text-gray-500 italic truncate" title="{{ str_replace('DEVOLUCIÓN: ', '', $loan->admin_comment) ?? 'Sin observaciones' }}">
                                     {{ str_replace('DEVOLUCIÓN: ', '', $loan->admin_comment) ?? 'Sin observaciones' }}
                                 </td>
                             </tr>
@@ -245,6 +290,7 @@
                             @endforelse
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
 
@@ -371,6 +417,75 @@
                     <div class="bg-white border border-gray-200 p-4 rounded-xl text-center shadow-sm">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Equipo Más Usado</p>
                         <p class="text-sm font-bold text-gray-800 mt-1 truncate">{{ $topItemName }}</p>
+                    </div>
+                </div>
+
+                {{-- SOLICITUDES POR PRODUCTO --}}
+                <div class="mt-8 border-t border-gray-200 pt-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2 flex items-center">
+                        <i class="fa-solid fa-magnifying-glass-chart text-indigo-600 mr-2"></i>Estadísticas por Producto
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-4">Selecciona un producto para ver cuántas veces ha sido solicitado y por quiénes (historial completo).</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-4 mb-6 items-end">
+                        <div class="w-full md:w-1/2">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Producto</label>
+                            <select id="stats-product-select" class="w-full border-gray-300 border p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white text-sm">
+                                <option value="">-- Selecciona un producto --</option>
+                                @foreach($items as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button onclick="loadProductStats()" class="bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-search"></i> Consultar
+                        </button>
+                    </div>
+
+                    <div id="product-stats-results" class="hidden">
+                        <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 mb-4">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-500 font-bold uppercase">Total Solicitudes</p>
+                                    <p id="stats-total-count" class="text-2xl font-black text-indigo-600 mt-1">0</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-500 font-bold uppercase">Aprobadas</p>
+                                    <p id="stats-approved-count" class="text-2xl font-black text-emerald-600 mt-1">0</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-500 font-bold uppercase">Rechazadas</p>
+                                    <p id="stats-rejected-count" class="text-2xl font-black text-red-600 mt-1">0</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-500 font-bold uppercase">Usuarios Distintos</p>
+                                    <p id="stats-users-count" class="text-2xl font-black text-amber-600 mt-1">0</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4 class="font-bold text-gray-700 mb-3 text-sm flex items-center">
+                            <i class="fa-solid fa-users mr-2 text-indigo-500"></i>Detalle de Solicitudes
+                        </h4>
+                        <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+                            <table class="w-full text-sm">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Usuario</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Fecha Solicitud</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Horario</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Estado</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Observaciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stats-detail-tbody" class="bg-white divide-y divide-gray-100">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="product-stats-empty" class="hidden text-center py-8 text-gray-400">
+                        <i class="fa-solid fa-chart-simple text-4xl mb-2 block"></i>
+                        <p class="text-sm font-medium">Selecciona un producto y rango de fechas para ver las estadísticas.</p>
                     </div>
                 </div>
             </div>
@@ -847,6 +962,66 @@
                         showAdminToast('Código regenerado: ' + data.barcode);
                     }
                 });
+        }
+        // --- ESTADÍSTICAS POR PRODUCTO ---
+        function loadProductStats() {
+            const productId = document.getElementById('stats-product-select').value;
+
+            if (!productId) {
+                alert('Por favor selecciona un producto.');
+                return;
+            }
+
+            const params = new URLSearchParams({ product_id: productId });
+
+            fetch('{{ route("admin.reportes.producto_stats") }}?' + params.toString(), {
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => { if (!r.ok) { return r.text().then(t => { throw new Error('HTTP ' + r.status + ': ' + t); }); } return r.json(); })
+            .then(data => {
+                const resultsDiv = document.getElementById('product-stats-results');
+                const emptyDiv = document.getElementById('product-stats-empty');
+
+                if (data.loans.length === 0) {
+                    resultsDiv.classList.add('hidden');
+                    emptyDiv.classList.remove('hidden');
+                    emptyDiv.innerHTML = '<i class="fa-solid fa-chart-simple text-4xl mb-2 block"></i><p class="text-sm font-medium">No hay solicitudes para este producto en el rango seleccionado.</p>';
+                    return;
+                }
+
+                resultsDiv.classList.remove('hidden');
+                emptyDiv.classList.add('hidden');
+
+                document.getElementById('stats-total-count').textContent = data.total;
+                document.getElementById('stats-approved-count').textContent = data.approved;
+                document.getElementById('stats-rejected-count').textContent = data.rejected;
+                document.getElementById('stats-users-count').textContent = data.unique_users;
+
+                let tbody = document.getElementById('stats-detail-tbody');
+                tbody.innerHTML = '';
+                data.loans.forEach(function(loan) {
+                    let statusBadge = '';
+                    if (loan.status === 'finished' || loan.status === 'active') {
+                        statusBadge = '<span class="px-2 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200"><i class="fa-solid fa-check mr-1"></i>Aprobada</span>';
+                    } else if (loan.status === 'rejected') {
+                        statusBadge = '<span class="px-2 py-1 text-xs font-bold rounded-md bg-red-50 text-red-700 border border-red-200"><i class="fa-solid fa-ban mr-1"></i>Rechazada</span>';
+                    } else {
+                        statusBadge = '<span class="px-2 py-1 text-xs font-bold rounded-md bg-amber-100 text-amber-700 border border-amber-200"><i class="fa-solid fa-hourglass-half mr-1"></i>Pendiente</span>';
+                    }
+                    let obs = loan.admin_comment ? loan.admin_comment.replace('DEVOLUCIÓN: ', '') : '—';
+                    tbody.innerHTML += '<tr class="hover:bg-gray-50">' +
+                        '<td class="px-4 py-3 text-sm font-medium text-gray-800">' + loan.user + '</td>' +
+                        '<td class="px-4 py-3 text-sm text-gray-600">' + loan.date + '</td>' +
+                        '<td class="px-4 py-3 text-sm text-gray-600">' + loan.time + '</td>' +
+                        '<td class="px-4 py-3">' + statusBadge + '</td>' +
+                        '<td class="px-4 py-3 text-sm text-gray-500 italic">' + obs + '</td>' +
+                    '</tr>';
+                });
+            })
+            .catch(function(err) {
+                console.error('Error cargando estadísticas:', err);
+                alert('Error al cargar las estadísticas. Intenta de nuevo.');
+            });
         }
     </script>
 </body>

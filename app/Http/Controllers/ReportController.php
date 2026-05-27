@@ -8,7 +8,6 @@ use App\Models\Item;
 use App\Models\RoomReservation;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-
 class ReportController extends Controller
 {
     public function index()
@@ -61,6 +60,39 @@ class ReportController extends Controller
         ]);
 
         return $pdf->download('reporte-semanal-' . $start->format('Y-m-d') . '.pdf');
+    }
+
+    public function productoStats(Request $request)
+    {
+        $productId = $request->input('product_id');
+
+        $loans = Loan::with(['user', 'item'])
+            ->where('item_id', $productId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $total = $loans->count();
+        $approved = $loans->whereIn('status', ['active', 'finished'])->count();
+        $rejected = $loans->where('status', 'rejected')->count();
+        $uniqueUsers = $loans->pluck('user_id')->unique()->count();
+
+        $loanData = $loans->map(function ($loan) {
+            return [
+                'user' => $loan->user?->username ?? 'Usuario eliminado',
+                'date' => $loan->created_at ? $loan->created_at->format('d/m/Y') : '—',
+                'time' => ($loan->start_date ? $loan->start_date->format('H:i') : '¿?') . ' - ' . ($loan->end_date ? $loan->end_date->format('H:i') : '¿?'),
+                'status' => $loan->status,
+                'admin_comment' => $loan->admin_comment,
+            ];
+        });
+
+        return response()->json([
+            'total' => $total,
+            'approved' => $approved,
+            'rejected' => $rejected,
+            'unique_users' => $uniqueUsers,
+            'loans' => $loanData,
+        ]);
     }
 
     public function mensual()

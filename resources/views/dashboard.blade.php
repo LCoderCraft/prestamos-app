@@ -25,18 +25,42 @@
         .high-contrast .bg-emerald-50 { background: #000 !important; }
         body { font-size: var(--access-font-size); }
         .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-        .dark body, .dark .bg-gradient-to-br, .dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 { background: #1a1a2e !important; }
-        .dark .bg-white { background: #16213e !important; }
+        .dark body, .dark .bg-gradient-to-br, .dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 { background: #0a1628 !important; }
+        .dark .bg-white { background: #0f1d35 !important; }
         .dark .text-gray-800, .dark .text-gray-700, .dark .text-gray-600, .dark .text-gray-500,
-        .dark .text-gray-400, .dark .text-indigo-600, .dark .text-indigo-700, .dark .text-emerald-700,
-        .dark .text-red-600, .dark .text-red-700 { color: #e0e0e0 !important; }
-        .dark .border-gray-100, .dark .border-gray-200, .dark .border-gray-300 { border-color: #2a2a4a !important; }
-        .dark .bg-gray-50 { background: #1a1a2e !important; }
-        .dark .bg-indigo-50 { background: #1a1a3e !important; }
+        .dark .text-gray-400, .dark .text-gray-300, .dark .text-indigo-600, .dark .text-indigo-700,
+        .dark .text-emerald-700, .dark .text-red-600, .dark .text-red-700 { color: #c8d6e5 !important; }
+        .dark .border-gray-100, .dark .border-gray-200, .dark .border-gray-300 { border-color: #1a3356 !important; }
+        .dark .bg-gray-50 { background: #0d1f3c !important; }
+        .dark .bg-indigo-50 { background: #0f2847 !important; }
         .dark .bg-emerald-50 { background: #0a2a1a !important; }
         .dark .bg-amber-50 { background: #2a2a0a !important; }
         .dark .bg-red-50 { background: #2a0a0a !important; }
-        .dark .divide-gray-100 > *, .dark .divide-gray-200 > * { border-color: #2a2a4a !important; }
+        .dark .divide-gray-100 > *, .dark .divide-gray-200 > * { border-color: #1a3356 !important; }
+        .dark .bg-indigo-800 { background: #0a1e3d !important; }
+        .dark .bg-indigo-900 { background: #07132a !important; }
+        .dark .bg-indigo-900\/50 { background: rgba(7, 19, 42, 0.5) !important; }
+        .dark .text-indigo-300, .dark .text-indigo-200 { color: #5a8ec9 !important; }
+        .dark .text-indigo-100 { color: #8ab4f0 !important; }
+        .dark .bg-indigo-50\/30 { background: rgba(15, 40, 71, 0.3) !important; }
+        .dark .bg-indigo-50\/50 { background: rgba(15, 40, 71, 0.5) !important; }
+        .dark .text-indigo-800 { color: #8ab4f0 !important; }
+        .dark .hover\:bg-gray-50:hover { background-color: #0d1f3c !important; }
+        .dark .shadow-sm, .dark .shadow-md, .dark .shadow-lg, .dark .shadow-xl { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.4) !important; }
+        .dark th { color: #5a8ec9 !important; }
+        .dark td, .dark .text-gray-500 { color: #8ba4be !important; }
+        .dark .text-emerald-500, .dark .text-emerald-600 { color: #5cd68a !important; }
+        .dark .text-amber-500, .dark .text-amber-600 { color: #e8c84a !important; }
+        .dark .text-red-500 { color: #f87171 !important; }
+        .dark .text-indigo-400 { color: #6a9ed9 !important; }
+        .dark .bg-emerald-100 { background: #0d3320 !important; }
+        .dark .bg-amber-100 { background: #332d0d !important; }
+        .dark .bg-red-100 { background: #330d0d !important; }
+        .dark .text-emerald-800 { color: #5cd68a !important; }
+        .dark .text-amber-800 { color: #e8c84a !important; }
+        .dark .text-red-800 { color: #f87171 !important; }
+        .dark select, .dark input[type="text"], .dark input[type="date"], .dark input[type="number"], .dark input[type="url"], .dark input[type="email"], .dark input[type="password"], .dark input[type="time"], .dark textarea { background-color: #0d1f3c !important; border-color: #1a3356 !important; color: #c8d6e5 !important; }
+        .dark option { background-color: #0f1d35 !important; color: #c8d6e5 !important; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen font-sans">
@@ -119,10 +143,10 @@
             </div>
             
             <div class="flex gap-3 mb-6 flex-wrap">
-                <a href="{{ route('rooms.index') }}" class="bg-white border border-indigo-200 text-indigo-700 px-5 py-3 rounded-xl font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-colors shadow-sm flex items-center gap-2">
-                    <i class="fa-solid fa-computer"></i> Reservar Centro de Computo
+                <a href="{{ route('rooms.index') }}" class="bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-6 py-3 rounded-xl font-bold hover:from-indigo-700 hover:to-indigo-600 transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-2 transform hover:scale-[1.02] active:scale-[0.98]">
+                    <i class="fa-solid fa-computer"></i> Reservar Centro de Cómputo
                 </a>
-                <a href="{{ route('support.chat.index') }}" class="bg-white border border-emerald-200 text-emerald-700 px-5 py-3 rounded-xl font-bold hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-colors shadow-sm flex items-center gap-2">
+                <a href="{{ route('support.chat.index') }}" class="bg-gradient-to-r from-emerald-600 to-emerald-500 text-white px-6 py-3 rounded-xl font-bold hover:from-emerald-700 hover:to-emerald-600 transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-2 transform hover:scale-[1.02] active:scale-[0.98]">
                     <i class="fa-solid fa-headset"></i> Chat de Ayuda
                 </a>
             </div>
@@ -331,7 +355,7 @@
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="block text-sm font-bold mb-1 text-gray-700">Fecha Requerida</label>
-                        <input type="date" name="date" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm" required>
+                        <input type="date" name="date" min="{{ date('Y-m-d') }}" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold mb-1 text-gray-700">Hora de Inicio</label>
@@ -457,72 +481,12 @@
                 </div>
             </div>
 
-            {{-- GUÍA DE USO --}}
+            {{-- DATOS DE CONTACTO FIM --}}
             <div class="p-6">
                 <h4 class="text-md font-bold text-gray-800 mb-4 flex items-center">
-                    <i class="fa-solid fa-circle-question text-indigo-600 mr-2"></i>¿Cómo usar el sistema?
+                    <i class="fa-solid fa-address-card text-indigo-600 mr-2"></i>Datos de Contacto
                 </h4>
-                
-                <div class="space-y-3 text-sm text-gray-600">
-                    <details class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                        <summary class="font-bold text-gray-700 cursor-pointer">📦 Solicitar un equipo</summary>
-                        <div class="mt-2 pl-4 text-xs space-y-1">
-                            <p>1. Busca el equipo que necesitas en la sección "Equipos Disponibles".</p>
-                            <p>2. Haz clic en "Solicitar" y elige fecha, hora y duración.</p>
-                            <p>3. Espera a que un administrador apruebe tu solicitud.</p>
-                            <p>4. Recibirás una notificación cuando tu préstamo esté activo.</p>
-                        </div>
-                    </details>
-
-                    <details class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                        <summary class="font-bold text-gray-700 cursor-pointer">🖥️ Reservar un Centro de Cómputo</summary>
-                        <div class="mt-2 pl-4 text-xs space-y-1">
-                            <p>1. Haz clic en "Reservar Centro de Cómputo".</p>
-                            <p>2. Selecciona el centro que deseas y revisa la disponibilidad en el calendario.</p>
-                            <p>3. Haz clic en "Nueva Reservación" y completa los datos.</p>
-                            <p>4. Puedes reservar como individual, grupo escolar o profesor.</p>
-                        </div>
-                    </details>
-
-                    <details class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                        <summary class="font-bold text-gray-700 cursor-pointer">💬 Chat de Ayuda</summary>
-                        <div class="mt-2 pl-4 text-xs space-y-1">
-                            <p>1. Haz clic en "Chat de Ayuda" para iniciar una conversación.</p>
-                            <p>2. Escribe un asunto y describe tu problema o duda.</p>
-                            <p>3. Recibirás respuesta de un administrador en tiempo real.</p>
-                            <p>4. Recibirás notificaciones cuando haya nuevos mensajes.</p>
-                        </div>
-                    </details>
-
-                    <details class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                        <summary class="font-bold text-gray-700 cursor-pointer">⚙️ Personalizar vista</summary>
-                        <div class="mt-2 pl-4 text-xs space-y-1">
-                            <p>• Cambia entre vista cuadrícula y lista con los botones sobre el inventario.</p>
-                            <p>• Activa el modo oscuro desde esta configuración.</p>
-                            <p>• Ajusta el tamaño de fuente y contraste para mejor visibilidad.</p>
-                            <p>• Los cambios se guardan automáticamente en tu navegador.</p>
-                        </div>
-                    </details>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="fixed bottom-4 right-4 z-40">
-        <button onclick="showHelpFIM()" class="bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 hover:shadow-xl transition-all duration-300 flex items-center group">
-            <i class="fa-solid fa-circle-info text-xl"></i>
-            <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap group-hover:ml-2 font-medium">
-                Ayuda FIM
-            </span>
-        </button>
-        
-        <div id="help-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 flex backdrop-blur-sm transition-opacity">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
-                <div class="bg-gray-800 p-4 text-white flex justify-between items-center">
-                    <h3 class="text-lg font-bold flex items-center"><i class="fa-solid fa-circle-info mr-2"></i>Centro de Servicios FIM</h3>
-                    <button onclick="document.getElementById('help-modal').classList.add('hidden')" class="text-gray-400 hover:text-white transition"><i class="fa-solid fa-xmark text-xl"></i></button>
-                </div>
-                <div class="p-6 space-y-4 text-sm">
+                <div class="space-y-4 text-sm">
                     <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
                         <h4 class="font-bold text-indigo-800 mb-2"><i class="fa-solid fa-location-dot mr-1"></i> Ubicación</h4>
                         <p class="text-gray-700">Facultad de Ingeniería Mochis</p>
@@ -546,6 +510,62 @@
                     <div class="text-xs text-gray-400 text-center pt-2 border-t border-gray-100">
                         <i class="fa-solid fa-clock-rotate-left mr-1"></i> Acude con tu credencial vigente
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed bottom-4 right-4 z-40">
+        <button onclick="showHelpFIM()" class="bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 hover:shadow-xl transition-all duration-300 flex items-center group">
+            <i class="fa-solid fa-circle-info text-xl"></i>
+            <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap group-hover:ml-2 font-medium">
+                Ayuda FIM
+            </span>
+        </button>
+        
+        <div id="help-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 flex backdrop-blur-sm transition-opacity">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+                <div class="bg-gray-800 p-4 text-white flex justify-between items-center">
+                    <h3 class="text-lg font-bold flex items-center"><i class="fa-solid fa-circle-info mr-2"></i>¿Cómo usar el sistema?</h3>
+                    <button onclick="document.getElementById('help-modal').classList.add('hidden')" class="text-gray-400 hover:text-white transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                <div class="p-6 space-y-3 text-sm text-gray-600">
+                    <details class="bg-gray-50 p-3 rounded-lg border border-gray-200" open>
+                        <summary class="font-bold text-gray-700 cursor-pointer">📦 Solicitar un equipo</summary>
+                        <div class="mt-2 pl-4 text-xs space-y-1">
+                            <p>1. Busca el equipo que necesitas en la sección "Equipos Disponibles".</p>
+                            <p>2. Haz clic en "Solicitar" y elige fecha, hora y duración.</p>
+                            <p>3. Espera a que un administrador apruebe tu solicitud.</p>
+                            <p>4. Recibirás una notificación cuando tu préstamo esté activo.</p>
+                        </div>
+                    </details>
+                    <details class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <summary class="font-bold text-gray-700 cursor-pointer">🖥️ Reservar un Centro de Cómputo</summary>
+                        <div class="mt-2 pl-4 text-xs space-y-1">
+                            <p>1. Haz clic en "Reservar Centro de Cómputo".</p>
+                            <p>2. Selecciona el centro que deseas y revisa la disponibilidad en el calendario.</p>
+                            <p>3. Haz clic en "Nueva Reservación" y completa los datos.</p>
+                            <p>4. Puedes reservar como individual, grupo escolar o profesor.</p>
+                        </div>
+                    </details>
+                    <details class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <summary class="font-bold text-gray-700 cursor-pointer">💬 Chat de Ayuda</summary>
+                        <div class="mt-2 pl-4 text-xs space-y-1">
+                            <p>1. Haz clic en "Chat de Ayuda" para iniciar una conversación.</p>
+                            <p>2. Escribe un asunto y describe tu problema o duda.</p>
+                            <p>3. Recibirás respuesta de un administrador en tiempo real.</p>
+                            <p>4. Recibirás notificaciones cuando haya nuevos mensajes.</p>
+                        </div>
+                    </details>
+                    <details class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <summary class="font-bold text-gray-700 cursor-pointer">⚙️ Personalizar vista</summary>
+                        <div class="mt-2 pl-4 text-xs space-y-1">
+                            <p>• Cambia entre vista cuadrícula y lista con los botones sobre el inventario.</p>
+                            <p>• Activa el modo oscuro desde la configuración de tu perfil.</p>
+                            <p>• Ajusta el tamaño de fuente y contraste para mejor visibilidad.</p>
+                            <p>• Los cambios se guardan automáticamente en tu navegador.</p>
+                        </div>
+                    </details>
                 </div>
             </div>
         </div>

@@ -16,11 +16,26 @@
         .ev-pending { background: #fef3c7; color: #92400e; border-left: 3px dashed #f59e0b; }
         :root { --access-font-size: 100%; }
         body { font-size: var(--access-font-size); }
-        .dark body, .dark .bg-gradient-to-br, .dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 { background: #1a1a2e !important; }
-        .dark .bg-white { background: #16213e !important; }
+        .dark body, .dark .bg-gradient-to-br, .dark .bg-gray-50, .dark .bg-gray-100, .dark .bg-gray-200 { background: #0a1628 !important; }
+        .dark .bg-white { background: #0f1d35 !important; }
         .dark .text-gray-800, .dark .text-gray-700, .dark .text-gray-600, .dark .text-gray-500,
-        .dark .text-gray-400, .dark .text-indigo-600 { color: #e0e0e0 !important; }
-        .dark .border-gray-100, .dark .border-gray-200 { border-color: #2a2a4a !important; }
+        .dark .text-gray-400, .dark .text-gray-300, .dark .text-indigo-600, .dark .text-indigo-700 { color: #c8d6e5 !important; }
+        .dark .border-gray-100, .dark .border-gray-200 { border-color: #1a3356 !important; }
+        .dark .bg-indigo-800 { background: #0a1e3d !important; }
+        .dark .hover\:bg-gray-50:hover { background-color: #0d1f3c !important; }
+        .dark .shadow-sm, .dark .shadow-md, .dark .shadow-lg, .dark .shadow-xl { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.4) !important; }
+        .dark .text-indigo-200, .dark .text-indigo-300 { color: #5a8ec9 !important; }
+        .dark .text-indigo-100 { color: #8ab4f0 !important; }
+        .dark .text-indigo-800 { color: #8ab4f0 !important; }
+        .dark .text-emerald-500, .dark .text-emerald-600, .dark .text-emerald-700 { color: #5cd68a !important; }
+        .dark .text-red-500, .dark .text-red-600, .dark .text-red-700 { color: #f87171 !important; }
+        .dark .text-amber-500, .dark .text-amber-600 { color: #e8c84a !important; }
+        .dark .bg-indigo-50 { background: #0f2847 !important; }
+        .dark .bg-emerald-50 { background: #0a2a1a !important; }
+        .dark .bg-amber-50 { background: #2a2a0a !important; }
+        .dark .bg-red-50 { background: #2a0a0a !important; }
+        .dark select, .dark input[type="text"], .dark input[type="date"], .dark input[type="time"], .dark textarea { background-color: #0d1f3c !important; border-color: #1a3356 !important; color: #c8d6e5 !important; }
+        .dark option { background-color: #0f1d35 !important; color: #c8d6e5 !important; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen font-sans">
@@ -69,22 +84,27 @@
             @endforeach
         </div>
         <!-- Cabecera semana -->
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
             <h2 class="text-xl font-bold text-gray-800">
                 <i class="fa-solid fa-calendar-week text-indigo-600 mr-2"></i>
                 Semana del {{ $startOfWeek->format('d/m') }} al {{ $endOfWeek->format('d/m/Y') }}
             </h2>
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
+                <div class="flex bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                    <button onclick="setCalendarView('full')" id="view-full" class="px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white transition">Día Completo</button>
+                    <button onclick="setCalendarView('morning')" id="view-morning" class="px-3 py-1.5 text-xs font-bold text-gray-600 hover:bg-gray-50 transition">Mañana</button>
+                    <button onclick="setCalendarView('afternoon')" id="view-afternoon" class="px-3 py-1.5 text-xs font-bold text-gray-600 hover:bg-gray-50 transition">Tarde</button>
+                </div>
                 <a href="{{ route('rooms.index', ['room_id' => $selectedRoomId, 'week' => $startOfWeek->copy()->subWeek()->format('Y-m-d')]) }}"
-                   class="bg-white border border-gray-200 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-50 transition">
+                   class="bg-white border border-gray-200 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-50 transition flex items-center gap-1">
                     <i class="fa-solid fa-chevron-left"></i> Anterior
                 </a>
                 <a href="{{ route('rooms.index', ['room_id' => $selectedRoomId, 'week' => now()->format('Y-m-d')]) }}"
-                   class="bg-white border border-gray-200 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-50 transition">
+                   class="bg-white border border-gray-200 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-50 transition flex items-center gap-1">
                     Hoy
                 </a>
                 <a href="{{ route('rooms.index', ['room_id' => $selectedRoomId, 'week' => $startOfWeek->copy()->addWeek()->format('Y-m-d')]) }}"
-                   class="bg-white border border-gray-200 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-50 transition">
+                   class="bg-white border border-gray-200 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-50 transition flex items-center gap-1">
                     Siguiente <i class="fa-solid fa-chevron-right"></i>
                 </a>
             </div>
@@ -104,9 +124,9 @@
                             @endforeach
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-gray-100" id="calendar-body">
                         @foreach($hours as $hour)
-                            <tr>
+                            <tr data-hour="{{ $hour }}">
                                 <td class="p-2 text-xs text-gray-400 font-medium text-center w-16">{{ sprintf('%02d:00', $hour) }}</td>
                                 @foreach($weekDays as $day)
                                     @php
@@ -145,10 +165,11 @@
             <span class="flex items-center gap-1.5 text-xs text-gray-600"><span class="w-3 h-3 rounded bg-amber-100 border-l-2 border-dashed border-amber-500 inline-block"></span> Pendiente</span>
         </div>
         <!-- Botón nueva reserva -->
-        <div class="mt-6 text-center">
+        <div class="mt-6 flex justify-center gap-3">
             <button onclick="document.getElementById('reserve-modal').classList.remove('hidden')"
-                    class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-md transition inline-flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Nueva Reservación
+                    class="bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-8 py-3.5 rounded-xl font-bold hover:from-indigo-700 hover:to-indigo-600 shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center gap-3 text-lg transform hover:scale-[1.02] active:scale-[0.98]">
+                <span class="bg-white/20 p-1.5 rounded-lg"><i class="fa-solid fa-plus"></i></span>
+                Nueva Reservación
             </button>
         </div>
     </div>
@@ -213,7 +234,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-bold mb-1 text-gray-700">Fecha</label>
-                        <input type="date" name="date" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm" required>
+                        <input type="date" name="date" min="{{ date('Y-m-d') }}" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold mb-1 text-gray-700">Hora inicio</label>
@@ -255,6 +276,28 @@
         function toggleRoomsDarkMode() {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('roomsDarkMode', isDark);
+        }
+        function setCalendarView(view) {
+            const rows = document.querySelectorAll('#calendar-body tr');
+            const btns = ['full', 'morning', 'afternoon'];
+            btns.forEach(v => {
+                const btn = document.getElementById('view-' + v);
+                if (v === view) {
+                    btn.className = 'px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white transition';
+                } else {
+                    btn.className = 'px-3 py-1.5 text-xs font-bold text-gray-600 hover:bg-gray-50 transition';
+                }
+            });
+            rows.forEach(row => {
+                const hour = parseInt(row.dataset.hour);
+                if (view === 'full') {
+                    row.style.display = '';
+                } else if (view === 'morning') {
+                    row.style.display = (hour >= 7 && hour <= 13) ? '' : 'none';
+                } else if (view === 'afternoon') {
+                    row.style.display = (hour >= 14 && hour <= 20) ? '' : 'none';
+                }
+            });
         }
     </script>
 </body>
