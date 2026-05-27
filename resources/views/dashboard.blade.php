@@ -732,6 +732,8 @@
             } catch (e) { /* fallo silencioso */ }
         }
 
+        // cada 4 segundos pregunto si hay notificaciones nuevas
+        // si hay mas que la ultima vez, muestro un toast y recargo la pagina para que se vean los cambios
         setInterval(() => {
             fetch('{{ route("notifications.check") }}')
                 .then(response => response.json())
@@ -742,7 +744,6 @@
                             showToast(data.latest.message);
                             playNotificationSound();
                         }
-                        // Recargar la página suavemente para ver cambios en la tabla
                         setTimeout(() => { window.location.reload(); }, 2000);
                     }
                 })

@@ -29,7 +29,8 @@ public function loans() {
         'remember_token',
     ];
 
-    
+    // cambie el reset de contraseña para que mande un codigo de 6 digitos en lugar de un token largo
+    // asi el usuario solo copia el codigo y lo pega, mas facil que un link gigante
     public function sendPasswordResetNotification($token)
     {
         $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);

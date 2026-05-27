@@ -8,6 +8,10 @@ use App\Models\Item;
 use App\Models\RoomReservation;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+
+// controlador para los reportes en pdf y las estadisticas por producto
+// los reportes diario, semanal y mensual son para descargar en pdf
+// productoStats lo agregue despues para que el admin pueda ver estadisticas de un equipo especifico
 class ReportController extends Controller
 {
     public function index()
@@ -15,6 +19,7 @@ class ReportController extends Controller
         return view('reportes');
     }
 
+    // reporte de todo lo que paso hoy: prestamos y reservaciones
     public function diario()
     {
         $date = Carbon::today();
@@ -38,6 +43,7 @@ class ReportController extends Controller
         return $pdf->download('reporte-diario-' . $date->format('Y-m-d') . '.pdf');
     }
 
+    // reporte de los ultimos 7 dias, igual que el diario pero con rango de fechas
     public function semanal()
     {
         $end = Carbon::today();
@@ -62,6 +68,9 @@ class ReportController extends Controller
         return $pdf->download('reporte-semanal-' . $start->format('Y-m-d') . '.pdf');
     }
 
+    // esto lo agregue despues, el profe pidio poder ver estadisticas de un equipo en especifico
+    // devuelve json con el total de prestamos, aprobados, rechazados, usuarios unicos y la lista
+    // al principio tenia filtro de fechas pero lo quite para que muestre todos los prestamos del producto
     public function productoStats(Request $request)
     {
         $productId = $request->input('product_id');
@@ -76,6 +85,7 @@ class ReportController extends Controller
         $rejected = $loans->where('status', 'rejected')->count();
         $uniqueUsers = $loans->pluck('user_id')->unique()->count();
 
+        // mapeo los datos para que el frontend los muestre mas facil
         $loanData = $loans->map(function ($loan) {
             return [
                 'user' => $loan->user?->username ?? 'Usuario eliminado',
@@ -95,6 +105,7 @@ class ReportController extends Controller
         ]);
     }
 
+    // reporte de todo el mes actual
     public function mensual()
     {
         $start = Carbon::now()->startOfMonth();

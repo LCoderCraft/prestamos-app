@@ -277,6 +277,9 @@
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('roomsDarkMode', isDark);
         }
+        // muestra u oculta las filas del calendario segun la vista seleccionada
+        // uso data-hour que puse en cada fila para saber si es mañana o tarde
+        // full: muestra todas las horas (7 a 20), morning: solo hasta las 13, afternoon: desde las 14
         function setCalendarView(view) {
             const rows = document.querySelectorAll('#calendar-body tr');
             const btns = ['full', 'morning', 'afternoon'];

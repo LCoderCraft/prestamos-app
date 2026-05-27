@@ -964,6 +964,8 @@
                 });
         }
         // --- ESTADÍSTICAS POR PRODUCTO ---
+        // esto lo agregue cuando el profe pidio ver el detalle de cada equipo
+        // mando el id del producto y recibo json con los numeros y la lista de prestamos
         function loadProductStats() {
             const productId = document.getElementById('stats-product-select').value;
 

@@ -8,14 +8,19 @@ use App\Models\Item;
 
 class AdminController extends Controller
 {
-   public function index()
+    // esta es la vista principal del admin
+    // aqui se ven los prestamos activos/pendientes, el historial y el inventario
+    // al principio los ordenaba normal, pero luego use FIELD() para que los pendientes salgan primero
+    public function index()
     {
+        // prestamos que necesitan atencion: pendientes primero, luego activos
         $activeLoans = Loan::with(['user', 'item'])
                            ->whereIn('status', ['pending', 'active'])
                            ->orderByRaw("FIELD(status, 'pending') DESC")
                            ->orderBy('created_at', 'asc') 
                            ->get();
 
+        // historial: los que ya estan terminados, rechazados o cancelados
         $historyLoans = Loan::with(['user', 'item'])
                             ->whereIn('status', ['finished', 'rejected', 'cancelled'])
                             ->orderBy('updated_at', 'desc')
@@ -31,6 +36,7 @@ class AdminController extends Controller
         return redirect('/admin')->with('success', 'Producto agregado.');
     }
 
+    // para editar un equipo del inventario
     public function updateItem(Request $request, $id) {
         $item = Item::findOrFail($id);
 
@@ -50,6 +56,8 @@ class AdminController extends Controller
         return redirect('/admin')->with('success', 'Producto actualizado correctamente.');
     }
 
+    // genera codigos de barras para los equipos que aun no tienen
+    // lo puse porque algunos equipos se registraron antes de que agregara esa funcion
     public function codigos()
     {
         $items = Item::all();
@@ -62,6 +70,8 @@ class AdminController extends Controller
         return view('codigos', compact('items'));
     }
 
+    // si el admin quiere cambiar el codigo de barras de un equipo
+    // le genera uno nuevo y lo devuelve en json si es una peticion ajax
     public function regenerarBarcode($id)
     {
         $item = Item::findOrFail($id);
