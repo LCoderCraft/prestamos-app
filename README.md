@@ -1,59 +1,127 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistema de Control de Prestamos - FIM UAS
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema web para la gestion de prestamos de equipo y reservacion de centros de computo de la **Facultad de Ingenieria Mochis (FIM)** de la **Universidad Autonoma de Sinaloa (UAS)**.
 
-## About Laravel
+**Produccion:** https://prestamos-app.onrender.com
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Funcionalidades
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Prestamo de equipos** — Solicitud, aprobacion/rechazo y devolucion de materiales (laptops, herramientas, etc.) con control de inventario.
+- **Reserva de centros de computo** — Calendario semanal (lunes a viernes, 7am-8pm) con reservas por usuario, grupo o maestro.
+- **Generacion de codigos de barras** — Formato `UAS-INV-XXXXXX` con impresion y regeneracion via JsBarcode.
+- **Reportes PDF** — Reportes diarios, semanales y mensuales con estadisticas de prestamos y reservas (DomPDF).
+- **Chat de soporte** — Sistema de mensajeria con lectura de confirmacion, exportacion a texto plano y polling en tiempo real.
+- **Notificaciones** — Notificaciones en base de datos con polling cada 4 segundos y sonido.
+- **Restablecimiento de contrasena por codigo** — Codigo numerico de 6 digitos enviado por correo en lugar del enlace tradicional.
+- **Accesibilidad** — Modo oscuro, alto contraste, ajuste de tamano de fuente (80-150%) e indicadores visuales.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Tecnologias
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Capa | Tecnologia |
+|------|-----------|
+| Backend | Laravel 12, PHP 8.2 |
+| Frontend | Blade, Tailwind CSS, Alpine.js, Vite |
+| Base de datos | PostgreSQL (produccion), MySQL (local) |
+| PDF | barryvdh/laravel-dompdf |
+| Codigos de barras | JsBarcode (CDN) |
+| Despliegue | Render.com (plan gratuito) |
+| Correo | SMTP via Gmail |
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Instalacion local
 
-### Premium Partners
+```bash
+git clone https://github.com/tu-usuario/prestamos-app.git
+cd prestamos-app
+composer install
+npm install && npm run build
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Desarrollo
 
-## Contributing
+```bash
+npm run dev    # Vite en modo desarrollo
+php artisan serve
+php artisan queue:listen --tries=1
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Despliegue en produccion (Windows con Nginx)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Configura un dominio en [DuckDNS](https://duckdns.org).
+2. Ejecuta como Administrador:
+   ```powershell
+   .\configurar-dominio.ps1    # Configura DuckDNS y Nginx
+   .\setup-server.ps1          # Instala PHP-CGI y Nginx como servicios
+   ```
+3. Inicia servicios: `net start PHP-CGI` y `net start Nginx`.
+4. Abre puertos 80 y 443 en tu router.
+5. Configura SSL con [Win-ACME](https://www.win-acme.com/).
 
-## Security Vulnerabilities
+Ver `GUIASERVIDOR.md` para la guia detallada.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## Estructura del proyecto
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Base de datos — 13 tablas principales
+
+| Tabla | Descripcion |
+|-------|-------------|
+| `users` | Usuarios con roles `user` o `admin` |
+| `items` | Inventario de equipos prestables |
+| `loans` | Solicitudes de prestamo de equipo |
+| `computer_rooms` | Centros de computo registrados |
+| `room_reservations` | Reservas de centros de computo |
+| `support_chats` | Hilos de chat de soporte |
+| `chat_messages` | Mensajes individuales del chat |
+
+### Rutas principales
+
+| Ruta | Metodo | Acceso | Descripcion |
+|------|--------|--------|-------------|
+| `/dashboard` | GET | Usuario | Panel principal: equipos, prestamos activos, historial |
+| `/loans` | POST | Usuario | Crear solicitud de prestamo |
+| `/rooms` | GET | Usuario | Calendario semanal de reservas |
+| `/rooms/reserve` | POST | Usuario | Reservar centro de computo |
+| `/support/chat` | GET/POST | Usuario | Gestionar chat de soporte |
+| `/admin` | GET | Admin | Panel de administracion |
+| `/admin/reportes` | GET | Admin | Reportes PDF |
+| `/admin/codigos` | GET | Admin | Gestion de codigos de barras |
+| `/admin/rooms` | GET | Admin | Gestion de centros de computo |
+
+### Modelos y relaciones clave
+
+```
+User -- hasMany --> Loan
+User -- hasMany --> RoomReservation
+User -- hasMany --> SupportChat
+Item -- hasMany --> Loan
+ComputerRoom -- hasMany --> RoomReservation
+SupportChat -- hasMany --> ChatMessage
+```
+
+Cada modelo de `Item` y `ComputerRoom` implementa `isAvailable($start, $end)` para validar disponibilidad por rango de fechas.
+
+---
+
+## Roles de usuario
+
+- **user** — Puede solicitar prestamos, reservar centros de computo, usar el chat de soporte y ver su historial.
+- **admin** — Puede aprobar/rechazar prestamos y reservas, gestionar inventario y centros de computo, generar reportes y codigos de barras, y responder chats.
+
+---
+
+## Licencia
+
+MIT

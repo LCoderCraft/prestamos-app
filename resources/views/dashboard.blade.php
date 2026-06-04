@@ -68,9 +68,7 @@
     <nav class="bg-indigo-800 shadow-lg border-b-4 border-indigo-500 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="bg-white text-indigo-800 p-2 rounded-lg shadow-sm">
-                    <i class="fa-solid fa-projector text-xl"></i>
-                </div>
+                <img src="{{ asset('img/milogo.png') }}" alt="Logo FIM" class="h-10 w-auto">
                 <div>
                     <h1 class="text-xl font-bold text-white tracking-wide">Catálogo FIM</h1>
                     <p class="text-xs text-indigo-200 hidden md:block">Sistema de Control de Préstamos</p>
@@ -490,8 +488,8 @@
                     <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
                         <h4 class="font-bold text-indigo-800 mb-2"><i class="fa-solid fa-location-dot mr-1"></i> Ubicación</h4>
                         <p class="text-gray-700">Facultad de Ingeniería Mochis</p>
-                        <p class="text-gray-600 text-xs">Centro de Cómputo, Edificio Principal, Planta Baja</p>
-                        <p class="text-gray-600 text-xs mt-1">Por la entrada principal, frente a la biblioteca.</p>
+                        <p class="text-gray-600 text-xs">Edificio Central, Segundo Piso</p>
+                        <p class="text-gray-600 text-xs mt-1">Arriba de Dirección, frente a la Explanada Central.</p>
                     </div>
                     <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
                         <h4 class="font-bold text-emerald-800 mb-2"><i class="fa-solid fa-phone mr-1"></i> Contacto</h4>

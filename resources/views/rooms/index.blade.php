@@ -42,9 +42,7 @@
     <nav class="bg-indigo-800 shadow-lg border-b-4 border-indigo-500 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="bg-white text-indigo-800 p-2 rounded-lg shadow-sm">
-                    <i class="fa-solid fa-computer text-xl"></i>
-                </div>
+                <img src="{{ asset('img/milogo.png') }}" alt="Logo FIM" class="h-10 w-auto">
                 <div>
                     <h1 class="text-xl font-bold text-white tracking-wide">Centros de Cómputo</h1>
                     <p class="text-xs text-indigo-200 hidden md:block">Reservaciones FIM</p>
