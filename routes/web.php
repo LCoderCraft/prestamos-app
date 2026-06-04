@@ -7,6 +7,10 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth; 
 
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok']);
+});
+
 Route::get('/', function () {
     if (Auth::check()) {
         return redirect('/dashboard');
